@@ -8,6 +8,8 @@ import { DatabaseModule } from './database/database.module';
 import { HealthController } from './modules/health/health.controller';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { UrlsModule } from './modules/urls/urls.module';
+import { ClicksModule } from './modules/clicks/clicks.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 
 @Module({
@@ -20,6 +22,8 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     DatabaseModule,
     UsersModule,
     AuthModule,
+    UrlsModule,
+    ClicksModule,
   ],
   controllers: [HealthController],
   providers: [
