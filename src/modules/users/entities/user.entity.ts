@@ -32,8 +32,6 @@ export class User {
   @DeleteDateColumn({ type: 'timestamp', nullable: true, name: 'deleted_at' })
   deletedAt: Date | null;
 
-  // Relacionamentos
-  @OneToMany(() => ShortUrl, (shortUrl) => shortUrl.user)
+  @OneToMany(() => ShortUrl, shortUrl => shortUrl.user)
   shortUrls: ShortUrl[];
 }
-

@@ -21,4 +21,3 @@ const databaseConfig: DataSourceOptions = {
 };
 
 export default new DataSource(databaseConfig);
-

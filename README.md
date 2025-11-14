@@ -317,9 +317,13 @@ A documentação Swagger inclui:
 
 #### URLs
 - `POST /api/urls` - Criar URL encurtado (público ou autenticado)
-- `GET /api/urls` - Listar URLs do usuário (autenticado)
-- `PUT /api/urls/:id` - Atualizar URL (autenticado)
-- `DELETE /api/urls/:id` - Deletar URL (autenticado)
+  - Body: `{ "originalUrl": "https://example.com" }`
+  - Retorna: `{ "id": "...", "originalUrl": "...", "shortUrl": "...", "shortCode": "...", "userId": "..." | null }`
+- `GET /api/urls` - Listar URLs do usuário com contagem de cliques (autenticado)
+  - Retorna: `{ "urls": [...], "total": 1 }` (cada URL inclui `clickCount`)
+- `PUT /api/urls/:id` - Atualizar URL (autenticado, requer ownership)
+  - Body: `{ "originalUrl": "https://new-url.com" }`
+- `DELETE /api/urls/:id` - Deletar URL (autenticado, requer ownership)
 
 #### Redirecionamento
 - `GET /:shortCode` - Redirecionar para URL original

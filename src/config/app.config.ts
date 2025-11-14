@@ -14,4 +14,3 @@ export default registerAs('app', () => ({
   shortCodeLength: parseNumber(process.env.SHORT_CODE_LENGTH, 6),
   shortCodeStrategy: process.env.SHORT_CODE_STRATEGY || 'hash',
 }));
-

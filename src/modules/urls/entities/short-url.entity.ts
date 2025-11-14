@@ -48,15 +48,13 @@ export class ShortUrl {
   @DeleteDateColumn({ type: 'timestamp', nullable: true, name: 'deleted_at' })
   deletedAt: Date | null;
 
-  // Relacionamentos
-  @ManyToOne(() => User, (user) => user.shortUrls, {
+  @ManyToOne(() => User, user => user.shortUrls, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   @JoinColumn({ name: 'user_id' })
   user: User | null;
 
-  @OneToMany(() => Click, (click) => click.shortUrl)
+  @OneToMany(() => Click, click => click.shortUrl)
   clicks: Click[];
 }
-

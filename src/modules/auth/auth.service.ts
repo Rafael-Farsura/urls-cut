@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -29,23 +25,16 @@ export class AuthService {
     return bcrypt.hash(password, saltRounds);
   }
 
-  async verifyPassword(
-    plainPassword: string,
-    hashedPassword: string,
-  ): Promise<boolean> {
+  async verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
   }
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.usersService.findByEmail(email);
-    if (!user) {
-      return null;
-    }
+    if (!user) return null;
 
     const isPasswordValid = await this.verifyPassword(password, user.passwordHash);
-    if (!isPasswordValid) {
-      return null;
-    }
+    if (!isPasswordValid) return null;
 
     return user;
   }
@@ -55,26 +44,18 @@ export class AuthService {
       sub: user.id,
       email: user.email,
     };
+
     return this.jwtService.signAsync(payload);
   }
 
-  async register(
-    email: string,
-    password: string,
-  ): Promise<AuthResponse> {
-    // Verificar se usuário já existe
+  async register(email: string, password: string): Promise<AuthResponse> {
     const existingUser = await this.usersService.findByEmail(email);
-    if (existingUser) {
-      throw new ConflictException('Email já está em uso');
-    }
+    if (existingUser) throw new ConflictException('Email já está em uso');
 
-    // Hash da senha
     const passwordHash = await this.hashPassword(password);
 
-    // Criar usuário
     const user = await this.usersService.create(email, passwordHash);
 
-    // Gerar token
     const access_token = await this.generateToken(user);
 
     return {
@@ -88,9 +69,7 @@ export class AuthService {
 
   async login(email: string, password: string): Promise<AuthResponse> {
     const user = await this.validateUser(email, password);
-    if (!user) {
-      throw new UnauthorizedException('Credenciais inválidas');
-    }
+    if (!user) throw new UnauthorizedException('Credenciais inválidas');
 
     const access_token = await this.generateToken(user);
 
@@ -103,4 +82,3 @@ export class AuthService {
     };
   }
 }
-

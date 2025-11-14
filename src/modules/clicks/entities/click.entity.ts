@@ -29,11 +29,9 @@ export class Click {
   @CreateDateColumn({ type: 'timestamp', name: 'clicked_at' })
   clickedAt: Date;
 
-  // Relacionamentos
-  @ManyToOne(() => ShortUrl, (shortUrl) => shortUrl.clicks, {
+  @ManyToOne(() => ShortUrl, shortUrl => shortUrl.clicks, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'short_url_id' })
   shortUrl: ShortUrl;
 }
-

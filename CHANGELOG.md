@@ -24,25 +24,38 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Módulo de Usuários com Repository e Service
 - Soft delete implementado em todas as entidades
 
-## [0.4.0] - Planejado
+## [0.4.0] - 2025-11-14
 
 ### Added
 - Contabilização de cliques em URLs encurtadas
-- Endpoint para listar estatísticas de cliques
-- View `short_urls_with_stats` no banco de dados
+- ClicksModule com ClicksRepository e ClicksService
+- Métodos: recordClick, getClickCount, getClicksByShortUrlId
+- Integração de contagem de cliques na listagem de URLs
 - Agregação de estatísticas de acesso
 
 ### Changed
-- Melhorada performance de queries de listagem de URLs
+- Melhorada estrutura de resposta de listagem de URLs (inclui clickCount)
 - Otimizado índice de cliques por data
 
-## [0.3.0] - Planejado
+## [0.3.0] - 2025-11-14
 
 ### Added
-- Operações CRUD para URLs (listar, editar, excluir)
+- Operações CRUD completas para URLs
+- Strategy Pattern para geração de código curto
+  - HashBasedGenerator (SHA-256 truncado)
+  - RandomGenerator (bytes aleatórios)
+  - ShortCodeGeneratorFactory
+- UrlsModule com UrlsRepository e UrlsService
+- Endpoints de URLs:
+  - POST /api/urls (público ou autenticado)
+  - GET /api/urls (autenticado - lista do usuário)
+  - PUT /api/urls/:id (autenticado)
+  - DELETE /api/urls/:id (autenticado)
+- DTOs de URL (CreateUrlDto, UpdateUrlDto) com validação class-validator
+- Retry logic para lidar com colisões de código (max 3 tentativas)
 - Validação de ownership em operações de modificação
-- Soft delete implementado
-- Endpoints autenticados para gerenciamento de URLs
+- Soft delete implementado para URLs
+- Validação de URL (protocolo HTTP/HTTPS obrigatório)
 
 ### Changed
 - Melhorada estrutura de resposta de listagem de URLs

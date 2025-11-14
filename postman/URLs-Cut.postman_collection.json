@@ -1,0 +1,966 @@
+{
+	"info": {
+		"_postman_id": "urls-cut-api-collection",
+		"name": "URLs Cut API",
+		"description": "Coleção completa da API de encurtamento de URLs desenvolvida com NestJS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "urls-cut"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has status field\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData.status).to.eql('ok');",
+									"});",
+									"",
+									"pm.test(\"Response has timestamp\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('timestamp');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Endpoint público para verificar o status da aplicação"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints públicos de verificação de saúde da API"
+		},
+		{
+			"name": "Autenticação",
+			"item": [
+				{
+					"name": "Registrar Usuário",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has access_token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('access_token');",
+									"    ",
+									"    // Salva o token automaticamente",
+									"    if (jsonData.access_token) {",
+									"        pm.environment.set('access_token', jsonData.access_token);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response has user object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('user');",
+									"    pm.expect(jsonData.user).to.have.property('id');",
+									"    pm.expect(jsonData.user).to.have.property('email');",
+									"    ",
+									"    // Salva o user_id",
+									"    if (jsonData.user && jsonData.user.id) {",
+									"        pm.environment.set('user_id', jsonData.user.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{test_email}}\",\n    \"password\": \"{{test_password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registra um novo usuário no sistema. Retorna um token JWT e informações do usuário."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has access_token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('access_token');",
+									"    ",
+									"    // Salva o token automaticamente",
+									"    if (jsonData.access_token) {",
+									"        pm.environment.set('access_token', jsonData.access_token);",
+									"        console.log('Token salvo automaticamente');",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response has user object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('user');",
+									"    pm.expect(jsonData.user).to.have.property('id');",
+									"    pm.expect(jsonData.user).to.have.property('email');",
+									"    ",
+									"    // Salva o user_id",
+									"    if (jsonData.user && jsonData.user.id) {",
+									"        pm.environment.set('user_id', jsonData.user.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{test_email}}\",\n    \"password\": \"{{test_password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Autentica um usuário existente e retorna um token JWT. O token é salvo automaticamente na variável de ambiente 'access_token'."
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Credenciais Inválidas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Response has error message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"invalid@example.com\",\n    \"password\": \"wrongpassword\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Testa o comportamento da API com credenciais inválidas"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de autenticação (registro e login)"
+		},
+		{
+			"name": "URLs",
+			"item": [
+				{
+					"name": "Criar URL Encurtada (Autenticado)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Verifica se o token existe, se não, faz login automático",
+									"if (!pm.environment.get('access_token')) {",
+									"    console.log('Token não encontrado. Fazendo login automático...');",
+									"    ",
+									"    pm.sendRequest({",
+									"        url: pm.environment.get('base_url') + '/api/auth/login',",
+									"        method: 'POST',",
+									"        header: {",
+									"            'Content-Type': 'application/json'",
+									"        },",
+									"        body: {",
+									"            mode: 'raw',",
+									"            raw: JSON.stringify({",
+									"                email: pm.environment.get('test_email'),",
+									"                password: pm.environment.get('test_password')",
+									"            })",
+									"        }",
+									"    }, function (err, res) {",
+									"        if (!err && res.code === 200) {",
+									"            var jsonData = res.json();",
+									"            if (jsonData.access_token) {",
+									"                pm.environment.set('access_token', jsonData.access_token);",
+									"                console.log('Login automático realizado com sucesso');",
+									"            }",
+									"        }",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has shortUrl\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('shortUrl');",
+									"    pm.expect(jsonData).to.have.property('shortCode');",
+									"    pm.expect(jsonData).to.have.property('originalUrl');",
+									"    ",
+									"    // Salva o shortCode e URL ID para uso posterior",
+									"    if (jsonData.shortCode) {",
+									"        pm.environment.set('last_short_code', jsonData.shortCode);",
+									"    }",
+									"    if (jsonData.id) {",
+									"        pm.environment.set('last_url_id', jsonData.id);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response has userId\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('userId');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originalUrl\": \"{{test_original_url}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/urls",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"urls"
+							]
+						},
+						"description": "Cria uma nova URL encurtada. Requer autenticação. O token é usado automaticamente do ambiente."
+					},
+					"response": []
+				},
+				{
+					"name": "Criar URL Encurtada (Público)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has shortUrl\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('shortUrl');",
+									"    pm.expect(jsonData).to.have.property('shortCode');",
+									"    ",
+									"    // Salva o shortCode",
+									"    if (jsonData.shortCode) {",
+									"        pm.environment.set('last_short_code', jsonData.shortCode);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"userId is null for public request\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    // userId pode ser null para requisições públicas",
+									"    pm.expect(jsonData.userId === null || jsonData.userId === undefined).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originalUrl\": \"https://www.google.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/urls",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"urls"
+							]
+						},
+						"description": "Cria uma URL encurtada sem autenticação (público). O userId será null."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar URLs do Usuário",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Verifica se o token existe",
+									"if (!pm.environment.get('access_token')) {",
+									"    console.log('Token não encontrado. Fazendo login automático...');",
+									"    ",
+									"    pm.sendRequest({",
+									"        url: pm.environment.get('base_url') + '/api/auth/login',",
+									"        method: 'POST',",
+									"        header: {",
+									"            'Content-Type': 'application/json'",
+									"        },",
+									"        body: {",
+									"            mode: 'raw',",
+									"            raw: JSON.stringify({",
+									"                email: pm.environment.get('test_email'),",
+									"                password: pm.environment.get('test_password')",
+									"            })",
+									"        }",
+									"    }, function (err, res) {",
+									"        if (!err && res.code === 200) {",
+									"            var jsonData = res.json();",
+									"            if (jsonData.access_token) {",
+									"                pm.environment.set('access_token', jsonData.access_token);",
+									"            }",
+									"        }",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has urls array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('urls');",
+									"    pm.expect(jsonData.urls).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Response has total count\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('total');",
+									"    pm.expect(jsonData.total).to.be.a('number');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/urls",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"urls"
+							]
+						},
+						"description": "Lista todas as URLs encurtadas do usuário autenticado. Inclui contagem de cliques."
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar URL",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Verifica se o token existe",
+									"if (!pm.environment.get('access_token')) {",
+									"    console.log('Token não encontrado. Fazendo login automático...');",
+									"    ",
+									"    pm.sendRequest({",
+									"        url: pm.environment.get('base_url') + '/api/auth/login',",
+									"        method: 'POST',",
+									"        header: {",
+									"            'Content-Type': 'application/json'",
+									"        },",
+									"        body: {",
+									"            mode: 'raw',",
+									"            raw: JSON.stringify({",
+									"                email: pm.environment.get('test_email'),",
+									"                password: pm.environment.get('test_password')",
+									"            })",
+									"        }",
+									"    }, function (err, res) {",
+									"        if (!err && res.code === 200) {",
+									"            var jsonData = res.json();",
+									"            if (jsonData.access_token) {",
+									"                pm.environment.set('access_token', jsonData.access_token);",
+									"            }",
+									"        }",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has updated originalUrl\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('originalUrl');",
+									"    pm.expect(jsonData.originalUrl).to.eql('https://www.example.com/updated');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originalUrl\": \"https://www.example.com/updated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/urls/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"urls",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{last_url_id}}",
+									"description": "ID da URL a ser atualizada"
+								}
+							]
+						},
+						"description": "Atualiza a URL original de uma URL encurtada. Requer autenticação e permissão (ser o dono da URL)."
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar URL",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Verifica se o token existe",
+									"if (!pm.environment.get('access_token')) {",
+									"    console.log('Token não encontrado. Fazendo login automático...');",
+									"    ",
+									"    pm.sendRequest({",
+									"        url: pm.environment.get('base_url') + '/api/auth/login',",
+									"        method: 'POST',",
+									"        header: {",
+									"            'Content-Type': 'application/json'",
+									"        },",
+									"        body: {",
+									"            mode: 'raw',",
+									"            raw: JSON.stringify({",
+									"                email: pm.environment.get('test_email'),",
+									"                password: pm.environment.get('test_password')",
+									"            })",
+									"        }",
+									"    }, function (err, res) {",
+									"        if (!err && res.code === 200) {",
+									"            var jsonData = res.json();",
+									"            if (jsonData.access_token) {",
+									"                pm.environment.set('access_token', jsonData.access_token);",
+									"            }",
+									"        }",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 204\", function () {",
+									"    pm.expect([200, 204]).to.include(pm.response.code);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/urls/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"urls",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{last_url_id}}",
+									"description": "ID da URL a ser deletada"
+								}
+							]
+						},
+						"description": "Deleta uma URL encurtada. Requer autenticação e permissão (ser o dono da URL)."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gerenciamento de URLs encurtadas"
+		},
+		{
+			"name": "Redirecionamento",
+			"item": [
+				{
+					"name": "Redirecionar por Short Code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 302 (Redirect)\", function () {",
+									"    pm.response.to.have.status(302);",
+									"});",
+									"",
+									"pm.test(\"Response has Location header\", function () {",
+									"    pm.expect(pm.response.headers.get('Location')).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{last_short_code}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{last_short_code}}"
+							]
+						},
+						"description": "Redireciona para a URL original usando o código curto. Contabiliza o clique automaticamente."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de redirecionamento"
+		},
+		{
+			"name": "Validações e Erros",
+			"item": [
+				{
+					"name": "Registrar - Email Inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response has validation errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"invalid-email\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Testa validação de email inválido"
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar - Senha Muito Curta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Testa validação de senha com menos de 6 caracteres"
+					},
+					"response": []
+				},
+				{
+					"name": "Criar URL - URL Inválida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originalUrl\": \"not-a-valid-url\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/urls",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"urls"
+							]
+						},
+						"description": "Testa validação de URL inválida"
+					},
+					"response": []
+				},
+				{
+					"name": "Acessar URL sem Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/urls",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"urls"
+							]
+						},
+						"description": "Testa acesso a endpoint protegido sem token de autenticação"
+					},
+					"response": []
+				}
+			],
+			"description": "Testes de validação e tratamento de erros"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script global executado antes de cada requisição",
+					"// Pode ser usado para logging ou configurações globais"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script global executado após cada requisição",
+					"// Pode ser usado para validações globais"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
+

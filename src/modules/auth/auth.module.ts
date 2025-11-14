@@ -31,4 +31,3 @@ import * as jwt from 'jsonwebtoken';
   exports: [JwtModule, PassportModule, AuthService],
 })
 export class AuthModule {}
-

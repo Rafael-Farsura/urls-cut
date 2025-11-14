@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
-import { User } from '../users/entities/user.entity';
+import { AuthService } from '../auth.service';
+import { UsersService } from '../../users/users.service';
+import { User } from '../../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 jest.mock('bcrypt');
@@ -93,10 +93,7 @@ describe('AuthService', () => {
       usersService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      const result = await service.validateUser(
-        'test@example.com',
-        'password123',
-      );
+      const result = await service.validateUser('test@example.com', 'password123');
 
       expect(result).toEqual(mockUser);
       expect(usersService.findByEmail).toHaveBeenCalledWith('test@example.com');
@@ -105,10 +102,7 @@ describe('AuthService', () => {
     it('deve retornar null para usuário não encontrado', async () => {
       usersService.findByEmail.mockResolvedValue(null);
 
-      const result = await service.validateUser(
-        'test@example.com',
-        'password123',
-      );
+      const result = await service.validateUser('test@example.com', 'password123');
 
       expect(result).toBeNull();
     });
@@ -117,10 +111,7 @@ describe('AuthService', () => {
       usersService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      const result = await service.validateUser(
-        'test@example.com',
-        'wrongPassword',
-      );
+      const result = await service.validateUser('test@example.com', 'wrongPassword');
 
       expect(result).toBeNull();
     });
@@ -172,9 +163,7 @@ describe('AuthService', () => {
 
       usersService.findByEmail.mockResolvedValue(mockUser);
 
-      await expect(service.register(email, password)).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(service.register(email, password)).rejects.toThrow(ConflictException);
       expect(usersService.create).not.toHaveBeenCalled();
     });
   });
@@ -207,9 +196,7 @@ describe('AuthService', () => {
       usersService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(service.login(email, password)).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(service.login(email, password)).rejects.toThrow(UnauthorizedException);
     });
 
     it('deve lançar UnauthorizedException para usuário não encontrado', async () => {
@@ -218,10 +205,7 @@ describe('AuthService', () => {
 
       usersService.findByEmail.mockResolvedValue(null);
 
-      await expect(service.login(email, password)).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(service.login(email, password)).rejects.toThrow(UnauthorizedException);
     });
   });
 });
-

@@ -258,15 +258,57 @@
 ✅ **Banco de dados** está estruturado com migrações
 ✅ **Módulo de Usuários** está completo e funcional
 
+#### ✅ Fase 6: Módulo de URLs (100% Completo)
+- [x] Estratégia de geração de código curto (Strategy Pattern)
+  - [x] Interface IShortCodeGenerator
+  - [x] HashBasedGenerator (SHA-256 truncado)
+  - [x] RandomGenerator (bytes aleatórios)
+  - [x] ShortCodeGeneratorFactory
+- [x] UrlsModule criado
+  - [x] TypeOrmModule.forFeature([ShortUrl])
+  - [x] Providers: UrlsRepository, UrlsService, geradores
+  - [x] Exports: UrlsRepository, UrlsService
+- [x] UrlsRepository implementado (Repository Pattern)
+  - [x] Métodos: create, findByCode, findByUserId, findById, update, softDelete, codeExists
+  - [x] Filtro automático de soft delete
+- [x] UrlsService implementado (Service Layer)
+  - [x] Métodos: create, findByCode, findByUserId, update, delete, getShortUrl
+  - [x] Retry logic para colisões (max 3 tentativas)
+  - [x] Validação de URL (HTTP/HTTPS)
+  - [x] Validação de ownership
+- [x] DTOs de URL criados
+  - [x] CreateUrlDto (originalUrl com validação)
+  - [x] UpdateUrlDto (originalUrl com validação)
+- [x] UrlsController implementado
+  - [x] POST /api/urls (público ou autenticado)
+  - [x] GET /api/urls (autenticado - lista do usuário)
+  - [x] PUT /api/urls/:id (autenticado)
+  - [x] DELETE /api/urls/:id (autenticado)
+
+#### ✅ Fase 7: Módulo de Cliques (100% Completo)
+- [x] ClicksModule criado
+  - [x] TypeOrmModule.forFeature([Click])
+  - [x] Providers: ClicksRepository, ClicksService
+  - [x] Exports: ClicksRepository, ClicksService
+- [x] ClicksRepository implementado (Repository Pattern)
+  - [x] Métodos: create, countByShortUrlId, findByShortUrlId
+- [x] ClicksService implementado (Service Layer)
+  - [x] Métodos: recordClick, getClickCount, getClicksByShortUrlId
+- [x] Integração de contabilização na listagem
+  - [x] GET /api/urls retorna clickCount para cada URL
+  - [x] Usa ClicksService para agregar dados
+
 **Status do Projeto:**
 - ✅ Fase 1: Setup Inicial - **100% Completo**
 - ✅ Fase 2: Entidades e Schema - **100% Completo**
 - ✅ Fase 3: Módulo de Usuários - **100% Completo**
 - ✅ Fase 4: Módulo de Autenticação - **100% Completo**
 - ✅ Fase 5: Guards e Decorators - **100% Completo**
-- ⏳ Fase 6: Módulo de URLs - **Próxima fase**
+- ✅ Fase 6: Módulo de URLs - **100% Completo**
+- ✅ Fase 7: Módulo de Cliques - **100% Completo**
+- ⏳ Fase 8: Redirecionamento - **Próxima fase**
 
-**Progresso Geral: 5 de 17 fases completas (~29%)**
+**Progresso Geral: 7 de 17 fases completas (~41%)**
 
-O projeto está pronto para continuar com a **Fase 6: Módulo de URLs**.
+O projeto está pronto para continuar com a **Fase 8: Redirecionamento**.
 

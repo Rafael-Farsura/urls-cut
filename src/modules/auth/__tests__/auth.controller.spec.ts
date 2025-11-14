@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+import { AuthController } from '../auth.controller';
+import { AuthService } from '../auth.service';
+import { RegisterDto } from '../dto/register.dto';
+import { LoginDto } from '../dto/login.dto';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -51,10 +51,7 @@ describe('AuthController', () => {
       const result = await controller.register(registerDto);
 
       expect(result).toEqual(mockAuthResponse);
-      expect(authService.register).toHaveBeenCalledWith(
-        registerDto.email,
-        registerDto.password,
-      );
+      expect(authService.register).toHaveBeenCalledWith(registerDto.email, registerDto.password);
     });
   });
 
@@ -70,11 +67,7 @@ describe('AuthController', () => {
       const result = await controller.login(loginDto);
 
       expect(result).toEqual(mockAuthResponse);
-      expect(authService.login).toHaveBeenCalledWith(
-        loginDto.email,
-        loginDto.password,
-      );
+      expect(authService.login).toHaveBeenCalledWith(loginDto.email, loginDto.password);
     });
   });
 });
-

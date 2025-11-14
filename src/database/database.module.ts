@@ -22,4 +22,3 @@ import { Click } from '../modules/clicks/entities/click.entity';
   ],
 })
 export class DatabaseModule {}
-

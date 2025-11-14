@@ -4,12 +4,10 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
   name = 'CreateInitialSchema1734120000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Criar extensão UUID
     await queryRunner.query(
       `CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`,
     );
 
-    // Verificar se a tabela users já existe
     const usersTable = await queryRunner.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
@@ -19,11 +17,9 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
     `);
 
     if (usersTable[0].exists) {
-      // Tabelas já existem, pular criação
       return;
     }
 
-    // Criar tabela users
     await queryRunner.query(`
       CREATE TABLE "users" (
         "id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -35,7 +31,6 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
       )
     `);
 
-    // Índices para users
     await queryRunner.query(
       `CREATE INDEX "idx_users_email" ON "users"("email") WHERE "deleted_at" IS NULL`,
     );
@@ -43,7 +38,6 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
       `CREATE INDEX "idx_users_deleted_at" ON "users"("deleted_at")`,
     );
 
-    // Criar tabela short_urls
     await queryRunner.query(`
       CREATE TABLE "short_urls" (
         "id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -64,7 +58,6 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
       )
     `);
 
-    // Índices para short_urls
     await queryRunner.query(
       `CREATE UNIQUE INDEX "idx_short_urls_code_active" 
        ON "short_urls"("short_code") 
@@ -82,7 +75,6 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
       `CREATE INDEX "idx_short_urls_created_at" ON "short_urls"("created_at")`,
     );
 
-    // Criar tabela clicks
     await queryRunner.query(`
       CREATE TABLE "clicks" (
         "id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -97,7 +89,6 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
       )
     `);
 
-    // Índices para clicks
     await queryRunner.query(
       `CREATE INDEX "idx_clicks_short_url_id" ON "clicks"("short_url_id")`,
     );
@@ -109,7 +100,6 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
        ON "clicks"("short_url_id", "clicked_at")`,
     );
 
-    // Criar função para atualizar updated_at
     await queryRunner.query(`
       CREATE OR REPLACE FUNCTION update_updated_at_column()
       RETURNS TRIGGER AS $$
@@ -120,7 +110,6 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
       $$ language 'plpgsql'
     `);
 
-    // Criar triggers para updated_at
     await queryRunner.query(`
       CREATE TRIGGER update_users_updated_at 
         BEFORE UPDATE ON "users" 
@@ -135,7 +124,6 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
         EXECUTE FUNCTION update_updated_at_column()
     `);
 
-    // Criar view short_urls_with_stats
     await queryRunner.query(`
       CREATE OR REPLACE VIEW "short_urls_with_stats" AS
       SELECT 
@@ -157,7 +145,6 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
         su.id, su.original_url, su.short_code, su.user_id, su.created_at, su.updated_at, su.deleted_at
     `);
 
-    // Adicionar comentários nas tabelas
     await queryRunner.query(
       `COMMENT ON TABLE "users" IS 'Tabela de usuários do sistema'`,
     );
@@ -183,10 +170,8 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Remover view
     await queryRunner.query(`DROP VIEW IF EXISTS "short_urls_with_stats"`);
 
-    // Remover triggers
     await queryRunner.query(
       `DROP TRIGGER IF EXISTS update_short_urls_updated_at ON "short_urls"`,
     );
@@ -194,17 +179,14 @@ export class CreateInitialSchema1734120000000 implements MigrationInterface {
       `DROP TRIGGER IF EXISTS update_users_updated_at ON "users"`,
     );
 
-    // Remover função
     await queryRunner.query(
       `DROP FUNCTION IF EXISTS update_updated_at_column()`,
     );
 
-    // Remover tabelas (ordem inversa devido a foreign keys)
     await queryRunner.query(`DROP TABLE IF EXISTS "clicks"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "short_urls"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "users"`);
 
-    // Remover extensão
     await queryRunner.query(`DROP EXTENSION IF EXISTS "uuid-ossp"`);
   }
 }
