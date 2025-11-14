@@ -21,13 +21,28 @@ Sistema de encurtamento de URLs construído com Node.js, seguindo os princípios
 
 Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 
-- ✅ Cadastro e autenticação de usuários
-- ✅ Encurtamento de URLs (máximo 6 caracteres)
-- ✅ URLs podem ser criadas por usuários autenticados ou anônimos
-- ✅ Usuários autenticados podem gerenciar suas URLs (listar, editar, excluir)
-- ✅ Contabilização de cliques em cada URL
+**Implementado (v0.2.0):**
+- ✅ Estrutura base do projeto NestJS
+- ✅ Configuração Docker e Docker Compose (dev e prod)
+- ✅ Banco de dados PostgreSQL com TypeORM
+- ✅ Entidades: User, ShortUrl, Click
+- ✅ Migrações de banco de dados
+- ✅ Módulo de Usuários (Repository e Service)
+- ✅ Sistema de autenticação com JWT
+- ✅ Endpoints de registro e login (POST /api/auth/register, POST /api/auth/login)
+- ✅ Guard de autenticação global (JwtAuthGuard)
+- ✅ Decorators customizados (@CurrentUser, @Public)
+- ✅ Validação de entrada (ValidationPipe global)
 - ✅ Soft delete (exclusão lógica)
 - ✅ Auditoria (created_at, updated_at)
+- ✅ Health check endpoint (/health)
+- ✅ Testes unitários (AuthService e AuthController)
+
+**Em Desenvolvimento:**
+- ⏳ Encurtamento de URLs (máximo 6 caracteres) (Fase 6)
+- ⏳ URLs podem ser criadas por usuários autenticados ou anônimos (Fase 6)
+- ⏳ Usuários autenticados podem gerenciar suas URLs (Fase 6)
+- ⏳ Contabilização de cliques em cada URL (Fase 7)
 
 ## 🛠 Tecnologias
 
@@ -98,14 +113,24 @@ cd urls-cut
 # Copie o arquivo de exemplo de variáveis de ambiente
 cp .env.example .env
 
-# Edite o .env com suas configurações
+# Edite o .env com suas configurações (opcional para desenvolvimento)
 
-# Suba o ambiente completo
+# Desenvolvimento (com hot reload)
+docker-compose -f docker-compose.dev.yml up
+
+# Ou produção
 docker-compose up -d
 
-# Execute as migrações
+# Execute as migrações (quando implementadas)
 docker-compose exec app npm run migration:run
+
+# Ver logs
+docker-compose logs -f app
 ```
+
+> **Nota**: Para desenvolvimento, use `docker-compose.dev.yml` que inclui hot reload. Para produção, use `docker-compose.yml`.
+
+Para mais detalhes sobre Docker, consulte [README_DOCKER.md](./README_DOCKER.md).
 
 ### Opção 2: Instalação Local
 
@@ -284,7 +309,11 @@ A documentação Swagger inclui:
 
 #### Autenticação
 - `POST /api/auth/register` - Registrar novo usuário
+  - Body: `{ "email": "user@example.com", "password": "password123" }`
+  - Retorna: `{ "access_token": "jwt_token", "user": { "id": "...", "email": "..." } }`
 - `POST /api/auth/login` - Login (retorna Bearer Token)
+  - Body: `{ "email": "user@example.com", "password": "password123" }`
+  - Retorna: `{ "access_token": "jwt_token", "user": { "id": "...", "email": "..." } }`
 
 #### URLs
 - `POST /api/urls` - Criar URL encurtado (público ou autenticado)
