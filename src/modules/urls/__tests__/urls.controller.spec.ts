@@ -155,11 +155,7 @@ describe('UrlsController', () => {
         shortCode: updatedUrl.shortCode,
         updatedAt: updatedUrl.updatedAt,
       });
-      expect(urlsService.update).toHaveBeenCalledWith(
-        id,
-        updateUrlDto.originalUrl,
-        mockUser.id,
-      );
+      expect(urlsService.update).toHaveBeenCalledWith(id, updateUrlDto.originalUrl, mockUser.id);
     });
   });
 
@@ -175,4 +171,3 @@ describe('UrlsController', () => {
     });
   });
 });
-

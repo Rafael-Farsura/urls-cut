@@ -29,4 +29,3 @@ export class RandomGenerator implements IShortCodeGenerator {
     return code;
   }
 }
-

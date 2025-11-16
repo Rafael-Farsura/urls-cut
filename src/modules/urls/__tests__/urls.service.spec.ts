@@ -1,10 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import {
-  ConflictException,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { UrlsService } from '../urls.service';
 import { UrlsRepository } from '../urls.repository';
 import { ClicksService } from '../../clicks/clicks.service';
@@ -128,9 +124,7 @@ describe('UrlsService', () => {
       const shortCode1 = 'abc123';
       const shortCode2 = 'def456';
 
-      codeGenerator.generate
-        .mockReturnValueOnce(shortCode1)
-        .mockReturnValueOnce(shortCode2);
+      codeGenerator.generate.mockReturnValueOnce(shortCode1).mockReturnValueOnce(shortCode2);
       urlsRepository.codeExists
         .mockResolvedValueOnce(true) // Primeira tentativa: colisão
         .mockResolvedValueOnce(false); // Segunda tentativa: sucesso
@@ -310,4 +304,3 @@ describe('UrlsService', () => {
     });
   });
 });
-

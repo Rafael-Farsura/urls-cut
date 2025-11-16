@@ -50,12 +50,16 @@ export class UrlsService {
         const exists = await this.urlsRepository.codeExists(shortCode);
         if (exists) {
           attempts++;
-          this.logger.warn(`Colisão detectada no código ${shortCode}, tentativa ${attempts}/${this.maxRetries}`);
-          
+          this.logger.warn(
+            `Colisão detectada no código ${shortCode}, tentativa ${attempts}/${this.maxRetries}`,
+          );
+
           if (attempts >= this.maxRetries) {
-            throw new ConflictException('Não foi possível gerar código único após várias tentativas');
+            throw new ConflictException(
+              'Não foi possível gerar código único após várias tentativas',
+            );
           }
-          
+
           // Pequeno delay antes de tentar novamente
           await this.delay(100 * attempts);
           continue;
@@ -68,21 +72,20 @@ export class UrlsService {
         shortUrl.userId = userId || null;
 
         const saved = await this.urlsRepository.create(shortUrl);
-        
         this.logger.log(`URL criada com sucesso: ${saved.shortCode}`);
         return saved;
       } catch (error) {
         if (error instanceof ConflictException) {
           throw error;
         }
-        
+
         attempts++;
         this.logger.error(`Erro ao criar URL (tentativa ${attempts}):`, error);
-        
+
         if (attempts >= this.maxRetries) {
           throw new ConflictException('Erro ao criar URL. Tente novamente.');
         }
-        
+
         await this.delay(100 * attempts);
       }
     }
@@ -106,10 +109,10 @@ export class UrlsService {
    */
   async findByUserId(userId: string): Promise<(ShortUrl & { clickCount: number })[]> {
     const urls = await this.urlsRepository.findByUserId(userId);
-    
+
     // Adiciona contagem de cliques para cada URL
     const urlsWithClickCount = await Promise.all(
-      urls.map(async (url) => {
+      urls.map(async url => {
         const clickCount = await this.clicksService.getClickCount(url.id);
         return {
           ...url,
@@ -195,4 +198,3 @@ export class UrlsService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
-

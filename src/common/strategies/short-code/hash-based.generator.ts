@@ -21,7 +21,6 @@ export class HashBasedGenerator implements IShortCodeGenerator {
 
     // Converte para base62 (0-9, a-z, A-Z)
     const base62Chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    
     // Pega os primeiros caracteres do hash e converte para base62
     let code = '';
     let hashIndex = 0;
@@ -45,4 +44,3 @@ export class HashBasedGenerator implements IShortCodeGenerator {
     return code.substring(0, this.codeLength);
   }
 }
-

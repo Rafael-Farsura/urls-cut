@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-} from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request, Response } from 'express';
@@ -65,19 +60,15 @@ export class MetricsInterceptor implements NestInterceptor {
           const duration = (Date.now() - startTime) / 1000;
           const statusCode = response.statusCode.toString();
 
-          this.httpRequestDuration
-            .labels(method, routePath, statusCode)
-            .observe(duration);
+          this.httpRequestDuration.labels(method, routePath, statusCode).observe(duration);
 
           this.httpRequestTotal.labels(method, routePath, statusCode).inc();
         },
-        error: (error) => {
+        error: error => {
           const duration = (Date.now() - startTime) / 1000;
           const statusCode = error?.status?.toString() || '500';
 
-          this.httpRequestDuration
-            .labels(method, routePath, statusCode)
-            .observe(duration);
+          this.httpRequestDuration.labels(method, routePath, statusCode).observe(duration);
 
           this.httpRequestTotal.labels(method, routePath, statusCode).inc();
         },
@@ -85,4 +76,3 @@ export class MetricsInterceptor implements NestInterceptor {
     );
   }
 }
-

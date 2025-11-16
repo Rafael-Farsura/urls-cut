@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request, Response } from 'express';
@@ -20,8 +14,7 @@ export class LoggingInterceptor implements NestInterceptor {
   private readonly isEnabled: boolean;
 
   constructor(private readonly configService: ConfigService) {
-    this.isEnabled =
-      this.configService.get<string>('ENABLE_LOGGING', 'true') === 'true';
+    this.isEnabled = this.configService.get<string>('ENABLE_LOGGING', 'true') === 'true';
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -45,11 +38,9 @@ export class LoggingInterceptor implements NestInterceptor {
           const { statusCode } = response;
 
           // Log da resposta
-          this.logger.log(
-            `${method} ${url} ${statusCode} - ${responseTime}ms`,
-          );
+          this.logger.log(`${method} ${url} ${statusCode} - ${responseTime}ms`);
         },
-        error: (error) => {
+        error: error => {
           const responseTime = Date.now() - startTime;
           const statusCode = error?.status || 500;
 
@@ -62,4 +53,3 @@ export class LoggingInterceptor implements NestInterceptor {
     );
   }
 }
-

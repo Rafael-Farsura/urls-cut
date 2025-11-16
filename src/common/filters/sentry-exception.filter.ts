@@ -19,14 +19,11 @@ export class SentryExceptionFilter implements ExceptionFilter {
   private readonly sentryDsn: string | undefined;
 
   constructor(private readonly configService: ConfigService) {
-    this.isEnabled =
-      this.configService.get<string>('SENTRY_ENABLED', 'false') === 'true';
+    this.isEnabled = this.configService.get<string>('SENTRY_ENABLED', 'false') === 'true';
     this.sentryDsn = this.configService.get<string>('SENTRY_DSN');
 
     if (this.isEnabled && !this.sentryDsn) {
-      this.logger.warn(
-        'Sentry está habilitado mas SENTRY_DSN não está configurado',
-      );
+      this.logger.warn('Sentry está habilitado mas SENTRY_DSN não está configurado');
     }
   }
 
@@ -44,7 +41,9 @@ export class SentryExceptionFilter implements ExceptionFilter {
         //   },
         // });
 
-        this.logger.debug('Exceção seria enviada para Sentry (integração real requer @sentry/node)');
+        this.logger.debug(
+          'Exceção seria enviada para Sentry (integração real requer @sentry/node)',
+        );
       } catch (error) {
         this.logger.error('Erro ao enviar exceção para Sentry', error);
       }
@@ -54,4 +53,3 @@ export class SentryExceptionFilter implements ExceptionFilter {
     // Em produção, isso seria feito através de um filter chain
   }
 }
-

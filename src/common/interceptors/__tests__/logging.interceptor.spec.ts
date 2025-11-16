@@ -55,7 +55,7 @@ describe('LoggingInterceptor', () => {
   });
 
   describe('intercept', () => {
-    it('deve logar requisição e resposta quando habilitado', (done) => {
+    it('deve logar requisição e resposta quando habilitado', done => {
       mockCallHandler.handle = jest.fn().mockReturnValue(of({ data: 'test' }));
 
       interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
@@ -66,7 +66,7 @@ describe('LoggingInterceptor', () => {
       });
     });
 
-    it('não deve logar quando desabilitado', (done) => {
+    it('não deve logar quando desabilitado', done => {
       configService.get.mockReturnValue('false');
       mockCallHandler.handle = jest.fn().mockReturnValue(of({ data: 'test' }));
 
@@ -78,7 +78,7 @@ describe('LoggingInterceptor', () => {
       });
     });
 
-    it('deve logar erros', (done) => {
+    it('deve logar erros', done => {
       const error = new Error('Test error');
       mockCallHandler.handle = jest.fn().mockReturnValue(throwError(() => error));
 
@@ -91,4 +91,3 @@ describe('LoggingInterceptor', () => {
     });
   });
 });
-

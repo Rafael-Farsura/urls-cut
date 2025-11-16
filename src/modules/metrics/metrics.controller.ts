@@ -28,7 +28,8 @@ export class MetricsController {
       'text/plain': {
         schema: {
           type: 'string',
-          example: '# HELP http_requests_total Total de requisições HTTP\n# TYPE http_requests_total counter',
+          example:
+            '# HELP http_requests_total Total de requisições HTTP\n# TYPE http_requests_total counter',
         },
       },
     },
@@ -54,4 +55,3 @@ export class MetricsController {
     return register.metrics();
   }
 }
-

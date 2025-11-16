@@ -21,7 +21,7 @@ Sistema de encurtamento de URLs construído com Node.js, seguindo os princípios
 
 Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 
-**Implementado (v0.5.0):**
+**Implementado (v0.6.0):**
 - ✅ Estrutura base do projeto NestJS
 - ✅ Configuração Docker e Docker Compose (dev e prod)
 - ✅ Banco de dados PostgreSQL com TypeORM
@@ -33,6 +33,7 @@ Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 - ✅ Guard de autenticação global (JwtAuthGuard)
 - ✅ Decorators customizados (@CurrentUser, @Public)
 - ✅ Validação de entrada (ValidationPipe global)
+- ✅ HttpExceptionFilter global para tratamento de erros
 - ✅ Soft delete (exclusão lógica)
 - ✅ Auditoria (created_at, updated_at)
 - ✅ Health check endpoint (/health)
@@ -41,7 +42,10 @@ Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 - ✅ Usuários autenticados podem gerenciar suas URLs (CRUD completo)
 - ✅ Contabilização de cliques em cada URL
 - ✅ Endpoint de redirecionamento GET /:shortCode
-- ✅ Testes unitários completos (59 testes, ~75% cobertura)
+- ✅ LoggingInterceptor para observabilidade
+- ✅ Métricas Prometheus (GET /metrics)
+- ✅ Documentação Swagger/OpenAPI (GET /api-docs)
+- ✅ Testes unitários completos (66 testes, ~80% cobertura)
 - ✅ Testes E2E para todas as rotas
 - ✅ Coleção Postman completa
 
@@ -296,15 +300,16 @@ A documentação completa da API está disponível via Swagger/OpenAPI:
 
 - **URL Local**: `http://localhost:3000/api-docs`
 - **URL Produção**: [Link será adicionado após deploy]
-- **Arquivo OpenAPI**: `docs/openapi.yaml` (será gerado automaticamente)
 
 A documentação Swagger inclui:
 - ✅ Descrição de todos os endpoints
 - ✅ Schemas de requisição e resposta
 - ✅ Exemplos de uso
 - ✅ Códigos de status HTTP
-- ✅ Autenticação JWT
+- ✅ Autenticação JWT (Bearer Token)
 - ✅ Validações aplicadas
+- ✅ Tags organizadas (auth, urls, health, metrics)
+- ✅ Teste interativo de endpoints
 
 ### Endpoints Principais
 

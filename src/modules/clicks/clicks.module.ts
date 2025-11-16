@@ -10,4 +10,3 @@ import { ClicksService } from './clicks.service';
   exports: [ClicksRepository, ClicksService],
 })
 export class ClicksModule {}
-

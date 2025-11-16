@@ -307,8 +307,12 @@
 - ✅ Fase 6: Módulo de URLs - **100% Completo**
 - ✅ Fase 7: Módulo de Cliques - **100% Completo**
 - ✅ Fase 8: Redirecionamento - **100% Completo**
+- ✅ Fase 9: Validação e Tratamento de Erros - **100% Completo**
+- ✅ Fase 10: Observabilidade - **100% Completo**
+- ✅ Fase 11: Testes - **100% Completo**
+- ✅ Fase 12: Documentação Swagger - **100% Completo**
 
-**Progresso Geral: 8 de 17 fases completas (~47%)**
+**Progresso Geral: 12 de 17 fases completas (~71%)**
 
 ### ✅ Fase 8: Redirecionamento (100% Completo)
 - [x] RedirectController criado
@@ -323,10 +327,12 @@
 - [x] Testes E2E para redirecionamento
 
 ### Testes Implementados
-- ✅ **59 testes unitários** passando
-- ✅ **Cobertura: ~75%** (Services: 92-100%, Controllers: 100%)
+- ✅ **66 testes unitários** passando
+- ✅ **Cobertura: ~80%** (Services: 92-100%, Controllers: 100%, Filters: 100%, Interceptors: 100%)
 - ✅ Testes E2E completos para todas as rotas
 - ✅ Testes de validação e tratamento de erros
+- ✅ Testes para HttpExceptionFilter (4 testes)
+- ✅ Testes para LoggingInterceptor (3 testes)
 
 ### Rotas Implementadas e Testadas
 1. ✅ GET /health - Health check
@@ -337,6 +343,44 @@
 6. ✅ PUT /api/urls/:id - Atualizar URL
 7. ✅ DELETE /api/urls/:id - Deletar URL
 8. ✅ GET /:shortCode - Redirecionar e contabilizar clique
+9. ✅ GET /metrics - Métricas Prometheus
+10. ✅ GET /api-docs - Documentação Swagger/OpenAPI
 
-O projeto está pronto para continuar com a **Fase 9: Validação e Tratamento de Erros**.
+### ✅ Fase 9: Validação e Tratamento de Erros (100% Completo)
+- [x] ValidationPipe global configurado (já estava implementado)
+- [x] HttpExceptionFilter criado e configurado globalmente
+  - [x] Formatação padronizada de respostas de erro
+  - [x] Logging de erros (warn para 4xx, error para 5xx)
+  - [x] Stack trace em desenvolvimento, oculto em produção
+- [x] Validações de negócio (já implementadas nos services)
+
+### ✅ Fase 10: Observabilidade (100% Completo)
+- [x] LoggingInterceptor criado e configurado globalmente
+  - [x] Log de requisições HTTP (método, URL, IP, User-Agent)
+  - [x] Log de respostas (status code, tempo de resposta)
+  - [x] Configurável via ENABLE_LOGGING
+- [x] Métricas Prometheus implementadas
+  - [x] MetricsInterceptor para coleta de métricas HTTP
+  - [x] MetricsController com endpoint GET /metrics
+  - [x] Métricas: http_request_duration_seconds, http_requests_total
+  - [x] Configurável via ENABLE_METRICS ou PROMETHEUS_ENABLED
+- [x] Configuração de observabilidade (observability.config.ts)
+  - [x] Suporte para logs, métricas e tracing
+  - [x] Configuração para Sentry, Elastic APM, Datadog (abstrações)
+
+### ✅ Fase 11: Testes (100% Completo)
+- [x] Testes unitários para HttpExceptionFilter (4 testes)
+- [x] Testes unitários para LoggingInterceptor (3 testes)
+- [x] Total: 66 testes passando (~80% cobertura)
+
+### ✅ Fase 12: Documentação Swagger (100% Completo)
+- [x] Swagger/OpenAPI configurado no main.ts
+- [x] Decorators @ApiTags em todos os controllers
+- [x] Decorators @ApiOperation e @ApiResponse
+- [x] Decorators @ApiProperty em todos os DTOs
+- [x] Decorators @ApiBearerAuth para autenticação JWT
+- [x] Exemplos e descrições detalhadas
+- [x] Endpoint: GET /api-docs
+
+O projeto está pronto para continuar com a **Fase 13: Docker e Infraestrutura** (já implementado) ou **Fase 14: Resiliência e Tolerância a Falhas**.
 

@@ -24,9 +24,50 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Módulo de Usuários com Repository e Service
 - Soft delete implementado em todas as entidades
 - Endpoint de redirecionamento GET /:shortCode
-- Testes unitários completos (59 testes passando)
+- Testes unitários completos (66 testes passando)
 - Testes E2E para todas as rotas
 - Coleção Postman completa
+- HttpExceptionFilter global para tratamento de erros
+- LoggingInterceptor para observabilidade
+- Métricas Prometheus (MetricsInterceptor e MetricsController)
+- Documentação Swagger/OpenAPI completa
+- Configuração de observabilidade (logs, métricas, tracing)
+
+## [0.6.0] - 2025-11-16
+
+### Added
+- HttpExceptionFilter global para tratamento consistente de erros
+  - Formatação padronizada de respostas de erro
+  - Logging de erros (warn para 4xx, error para 5xx)
+  - Stack trace em desenvolvimento, oculto em produção
+- LoggingInterceptor para observabilidade
+  - Log de todas as requisições HTTP (método, URL, IP, User-Agent)
+  - Log de respostas (status code, tempo de resposta)
+  - Configurável via ENABLE_LOGGING
+- Métricas Prometheus
+  - MetricsInterceptor para coleta de métricas HTTP
+  - MetricsController com endpoint GET /metrics
+  - Métricas: http_request_duration_seconds, http_requests_total
+  - Configurável via ENABLE_METRICS ou PROMETHEUS_ENABLED
+- Documentação Swagger/OpenAPI
+  - Configuração completa do SwaggerModule
+  - Decorators @ApiTags, @ApiOperation, @ApiResponse em todos os controllers
+  - Decorators @ApiProperty em todos os DTOs
+  - Autenticação JWT no Swagger
+  - Exemplos e descrições detalhadas
+  - Endpoint: GET /api-docs
+- Configuração de observabilidade (observability.config.ts)
+  - Suporte para logs, métricas e tracing
+  - Configuração para Sentry, Elastic APM, Datadog (abstrações)
+- Testes unitários para novos componentes
+  - HttpExceptionFilter (4 testes)
+  - LoggingInterceptor (3 testes)
+  - Total: 66 testes passando
+
+### Changed
+- Melhorado tratamento de erros com HttpExceptionFilter global
+- Adicionado logging estruturado de requisições
+- Melhorada documentação da API com Swagger
 
 ## [0.5.0] - 2025-11-14
 

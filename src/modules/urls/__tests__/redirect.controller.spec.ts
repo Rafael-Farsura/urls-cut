@@ -112,9 +112,9 @@ describe('RedirectController', () => {
 
       urlsService.findByCode.mockRejectedValue(new NotFoundException());
 
-      await expect(
-        controller.redirect(shortCode, mockRequest, mockResponse),
-      ).rejects.toThrow(NotFoundException);
+      await expect(controller.redirect(shortCode, mockRequest, mockResponse)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('não deve falhar redirecionamento se registro de clique falhar', async () => {
@@ -130,4 +130,3 @@ describe('RedirectController', () => {
     });
   });
 });
-

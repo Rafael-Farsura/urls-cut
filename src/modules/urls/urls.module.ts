@@ -12,11 +12,7 @@ import { HashBasedGenerator } from '../../common/strategies/short-code/hash-base
 import { RandomGenerator } from '../../common/strategies/short-code/random.generator';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ShortUrl]),
-    ConfigModule,
-    ClicksModule,
-  ],
+  imports: [TypeOrmModule.forFeature([ShortUrl]), ConfigModule, ClicksModule],
   controllers: [UrlsController, RedirectController],
   providers: [
     UrlsRepository,
@@ -28,4 +24,3 @@ import { RandomGenerator } from '../../common/strategies/short-code/random.gener
   exports: [UrlsRepository, UrlsService],
 })
 export class UrlsModule {}
-

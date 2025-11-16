@@ -19,8 +19,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private readonly isDevelopment: boolean;
 
   constructor(private readonly configService: ConfigService) {
-    this.isDevelopment =
-      this.configService.get<string>('NODE_ENV') === 'development';
+    this.isDevelopment = this.configService.get<string>('NODE_ENV') === 'development';
   }
 
   catch(exception: unknown, host: ArgumentsHost) {
@@ -40,10 +39,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message = exceptionResponse;
         error = exception.constructor.name;
       } else if (typeof exceptionResponse === 'object') {
-        message =
-          (exceptionResponse as any).message ||
-          exception.message ||
-          'Erro na requisição';
+        message = (exceptionResponse as any).message || exception.message || 'Erro na requisição';
         error = (exceptionResponse as any).error || exception.constructor.name;
       }
     } else if (exception instanceof Error) {
@@ -59,9 +55,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       method: request.method,
       message,
       error,
-      ...(this.isDevelopment && exception instanceof Error
-        ? { stack: exception.stack }
-        : {}),
+      ...(this.isDevelopment && exception instanceof Error ? { stack: exception.stack } : {}),
     };
 
     if (status >= 500) {
@@ -77,10 +71,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
       path: request.url,
       method: request.method,
       message,
-      ...(this.isDevelopment ? { error, stack: exception instanceof Error ? exception.stack : undefined } : {}),
+      ...(this.isDevelopment
+        ? { error, stack: exception instanceof Error ? exception.stack : undefined }
+        : {}),
     };
 
     response.status(status).json(errorResponse);
   }
 }
-

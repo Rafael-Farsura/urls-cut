@@ -17,7 +17,7 @@ export class UsersService {
   async create(email: string, passwordHash: string): Promise<User> {
     const existingUser = await this.findByEmail(email);
     if (existingUser) throw new ConflictException('Email já está em uso');
-    
+
     return this.usersRepository.create({
       email,
       passwordHash,
@@ -26,15 +26,11 @@ export class UsersService {
 
   async update(id: string, data: Partial<User>): Promise<User> {
     const user = await this.findById(id);
-    if (!user)
-      throw new NotFoundException('Usuário não encontrado');
-    
+    if (!user) throw new NotFoundException('Usuário não encontrado');
 
     if (data.email && data.email !== user.email) {
       const existingUser = await this.findByEmail(data.email);
-      if (existingUser) 
-        throw new ConflictException('Email já está em uso');
-
+      if (existingUser) throw new ConflictException('Email já está em uso');
     }
 
     return this.usersRepository.update(id, data);
@@ -42,9 +38,7 @@ export class UsersService {
 
   async delete(id: string): Promise<void> {
     const user = await this.findById(id);
-    if (!user) 
-      throw new NotFoundException('Usuário não encontrado');
-    
+    if (!user) throw new NotFoundException('Usuário não encontrado');
 
     await this.usersRepository.softDelete(id);
   }

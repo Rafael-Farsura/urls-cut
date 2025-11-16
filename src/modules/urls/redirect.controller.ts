@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Res, Req, NotFoundException, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { UrlsService } from './urls.service';
 import { ClicksService } from '../clicks/clicks.service';
@@ -8,6 +9,7 @@ import { Public } from '../../common/decorators/public.decorator';
  * Controller para redirecionamento de URLs encurtadas
  * Rota na raiz: GET /:shortCode
  */
+@ApiTags('urls')
 @Controller()
 export class RedirectController {
   constructor(
@@ -22,6 +24,19 @@ export class RedirectController {
    */
   @Public()
   @Get(':shortCode')
+  @ApiOperation({ summary: 'Redirecionar para URL original' })
+  @ApiParam({ name: 'shortCode', description: 'Código curto da URL' })
+  @ApiResponse({
+    status: 302,
+    description: 'Redirecionamento para URL original',
+    headers: {
+      Location: {
+        description: 'URL original',
+        schema: { type: 'string', example: 'https://example.com' },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'URL encurtada não encontrada' })
   async redirect(
     @Param('shortCode') shortCode: string,
     @Req() request: Request,
@@ -53,4 +68,3 @@ export class RedirectController {
     }
   }
 }
-

@@ -49,7 +49,7 @@ describe('AppController (e2e)', () => {
       return request(app.getHttpServer())
         .get('/health')
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('status', 'ok');
           expect(res.body).toHaveProperty('timestamp');
         });
@@ -68,7 +68,7 @@ describe('AppController (e2e)', () => {
           password: testPassword,
         })
         .expect(201)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('access_token');
           expect(res.body).toHaveProperty('user');
           expect(res.body.user).toHaveProperty('id');
@@ -116,7 +116,7 @@ describe('AppController (e2e)', () => {
           password: testPassword,
         })
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('access_token');
           expect(res.body).toHaveProperty('user');
           authToken = res.body.access_token;
@@ -152,7 +152,7 @@ describe('AppController (e2e)', () => {
           originalUrl: 'https://www.google.com',
         })
         .expect(201)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('id');
           expect(res.body).toHaveProperty('originalUrl', 'https://www.google.com');
           expect(res.body).toHaveProperty('shortUrl');
@@ -170,7 +170,7 @@ describe('AppController (e2e)', () => {
           originalUrl: 'https://www.example.com',
         })
         .expect(201)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('id');
           expect(res.body).toHaveProperty('originalUrl', 'https://www.example.com');
           expect(res.body).toHaveProperty('shortUrl');
@@ -206,7 +206,7 @@ describe('AppController (e2e)', () => {
         .get('/api/urls')
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('urls');
           expect(res.body).toHaveProperty('total');
           expect(Array.isArray(res.body.urls)).toBe(true);
@@ -229,7 +229,7 @@ describe('AppController (e2e)', () => {
           originalUrl: 'https://www.updated-example.com',
         })
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('originalUrl', 'https://www.updated-example.com');
           expect(res.body).toHaveProperty('shortCode', shortCode);
         });
@@ -264,9 +264,7 @@ describe('AppController (e2e)', () => {
     });
 
     it('DELETE /api/urls/:id deve retornar 401 sem autenticação', () => {
-      return request(app.getHttpServer())
-        .delete(`/api/urls/${shortUrlId}`)
-        .expect(401);
+      return request(app.getHttpServer()).delete(`/api/urls/${shortUrlId}`).expect(401);
     });
 
     it('DELETE /api/urls/:id deve retornar 404 para URL já deletada', () => {
@@ -282,11 +280,9 @@ describe('AppController (e2e)', () => {
 
     beforeAll(async () => {
       // Criar uma URL pública para teste
-      const response = await request(app.getHttpServer())
-        .post('/api/urls')
-        .send({
-          originalUrl: 'https://www.google.com',
-        });
+      const response = await request(app.getHttpServer()).post('/api/urls').send({
+        originalUrl: 'https://www.google.com',
+      });
       publicShortCode = response.body.shortCode;
     });
 
@@ -328,4 +324,3 @@ describe('AppController (e2e)', () => {
     });
   });
 });
-

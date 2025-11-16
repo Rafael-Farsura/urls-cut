@@ -15,11 +15,7 @@ export class ClicksService {
   /**
    * Registra um novo clique em uma URL
    */
-  async recordClick(
-    shortUrlId: string,
-    ipAddress?: string,
-    userAgent?: string,
-  ): Promise<Click> {
+  async recordClick(shortUrlId: string, ipAddress?: string, userAgent?: string): Promise<Click> {
     const click = new Click();
     click.shortUrlId = shortUrlId;
     click.ipAddress = ipAddress || null;
@@ -27,7 +23,6 @@ export class ClicksService {
 
     const saved = await this.clicksRepository.create(click);
     this.logger.log(`Clique registrado para URL ${shortUrlId}`);
-    
     return saved;
   }
 
@@ -45,4 +40,3 @@ export class ClicksService {
     return this.clicksRepository.findByShortUrlId(shortUrlId);
   }
 }
-
