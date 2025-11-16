@@ -23,6 +23,38 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Migração inicial do banco de dados com triggers e view
 - Módulo de Usuários com Repository e Service
 - Soft delete implementado em todas as entidades
+- Endpoint de redirecionamento GET /:shortCode
+- Testes unitários completos (59 testes passando)
+- Testes E2E para todas as rotas
+- Coleção Postman completa
+
+## [0.5.0] - 2025-11-14
+
+### Added
+- Endpoint de redirecionamento GET /:shortCode
+  - Redireciona para URL original (302 Found)
+  - Contabiliza cliques automaticamente
+  - Não requer autenticação
+  - Registra IP e User-Agent do cliente
+- RedirectController para gerenciar redirecionamentos
+- Testes unitários completos:
+  - UrlsService (criação, busca, atualização, exclusão, validações)
+  - UrlsController (todos os endpoints CRUD)
+  - RedirectController (redirecionamento e registro de cliques)
+  - ClicksService (registro e contagem de cliques)
+  - HashBasedGenerator (geração determinística de códigos)
+  - RandomGenerator (geração aleatória de códigos)
+- Testes E2E completos:
+  - Health check
+  - Autenticação (registro e login)
+  - URLs (criação pública e autenticada, listagem, atualização, exclusão)
+  - Redirecionamento e contabilização de cliques
+  - Validações de entrada
+- Cobertura de testes: ~75% (59 testes passando)
+
+### Changed
+- Melhorada estrutura de testes (organizados em __tests__/)
+- Adicionada validação de IP e User-Agent no registro de cliques
 
 ## [0.4.0] - 2025-11-14
 

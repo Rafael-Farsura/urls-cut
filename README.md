@@ -21,7 +21,7 @@ Sistema de encurtamento de URLs construído com Node.js, seguindo os princípios
 
 Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 
-**Implementado (v0.2.0):**
+**Implementado (v0.5.0):**
 - ✅ Estrutura base do projeto NestJS
 - ✅ Configuração Docker e Docker Compose (dev e prod)
 - ✅ Banco de dados PostgreSQL com TypeORM
@@ -36,13 +36,14 @@ Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 - ✅ Soft delete (exclusão lógica)
 - ✅ Auditoria (created_at, updated_at)
 - ✅ Health check endpoint (/health)
-- ✅ Testes unitários (AuthService e AuthController)
-
-**Em Desenvolvimento:**
-- ⏳ Encurtamento de URLs (máximo 6 caracteres) (Fase 6)
-- ⏳ URLs podem ser criadas por usuários autenticados ou anônimos (Fase 6)
-- ⏳ Usuários autenticados podem gerenciar suas URLs (Fase 6)
-- ⏳ Contabilização de cliques em cada URL (Fase 7)
+- ✅ Encurtamento de URLs (máximo 6 caracteres)
+- ✅ URLs podem ser criadas por usuários autenticados ou anônimos
+- ✅ Usuários autenticados podem gerenciar suas URLs (CRUD completo)
+- ✅ Contabilização de cliques em cada URL
+- ✅ Endpoint de redirecionamento GET /:shortCode
+- ✅ Testes unitários completos (59 testes, ~75% cobertura)
+- ✅ Testes E2E para todas as rotas
+- ✅ Coleção Postman completa
 
 ## 🛠 Tecnologias
 

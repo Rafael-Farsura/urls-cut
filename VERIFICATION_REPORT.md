@@ -306,9 +306,37 @@
 - ✅ Fase 5: Guards e Decorators - **100% Completo**
 - ✅ Fase 6: Módulo de URLs - **100% Completo**
 - ✅ Fase 7: Módulo de Cliques - **100% Completo**
-- ⏳ Fase 8: Redirecionamento - **Próxima fase**
+- ✅ Fase 8: Redirecionamento - **100% Completo**
 
-**Progresso Geral: 7 de 17 fases completas (~41%)**
+**Progresso Geral: 8 de 17 fases completas (~47%)**
 
-O projeto está pronto para continuar com a **Fase 8: Redirecionamento**.
+### ✅ Fase 8: Redirecionamento (100% Completo)
+- [x] RedirectController criado
+  - [x] GET /:shortCode implementado
+  - [x] Redirecionamento 302 para URL original
+  - [x] Registro automático de cliques (assíncrono)
+  - [x] Captura de IP e User-Agent
+  - [x] Tratamento de erros (NotFoundException)
+- [x] Integração com ClicksService
+- [x] Rota pública (não requer autenticação)
+- [x] Testes unitários completos (RedirectController)
+- [x] Testes E2E para redirecionamento
+
+### Testes Implementados
+- ✅ **59 testes unitários** passando
+- ✅ **Cobertura: ~75%** (Services: 92-100%, Controllers: 100%)
+- ✅ Testes E2E completos para todas as rotas
+- ✅ Testes de validação e tratamento de erros
+
+### Rotas Implementadas e Testadas
+1. ✅ GET /health - Health check
+2. ✅ POST /api/auth/register - Registrar usuário
+3. ✅ POST /api/auth/login - Login
+4. ✅ POST /api/urls - Criar URL (público/autenticado)
+5. ✅ GET /api/urls - Listar URLs do usuário
+6. ✅ PUT /api/urls/:id - Atualizar URL
+7. ✅ DELETE /api/urls/:id - Deletar URL
+8. ✅ GET /:shortCode - Redirecionar e contabilizar clique
+
+O projeto está pronto para continuar com a **Fase 9: Validação e Tratamento de Erros**.
 
