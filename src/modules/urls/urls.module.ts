@@ -5,6 +5,7 @@ import { ShortUrl } from './entities/short-url.entity';
 import { UrlsRepository } from './urls.repository';
 import { UrlsService } from './urls.service';
 import { UrlsController } from './urls.controller';
+import { RedirectController } from './redirect.controller';
 import { ClicksModule } from '../clicks/clicks.module';
 import { ShortCodeGeneratorFactory } from '../../common/strategies/short-code/short-code-generator.factory';
 import { HashBasedGenerator } from '../../common/strategies/short-code/hash-based.generator';
@@ -16,7 +17,7 @@ import { RandomGenerator } from '../../common/strategies/short-code/random.gener
     ConfigModule,
     ClicksModule,
   ],
-  controllers: [UrlsController],
+  controllers: [UrlsController, RedirectController],
   providers: [
     UrlsRepository,
     UrlsService,
