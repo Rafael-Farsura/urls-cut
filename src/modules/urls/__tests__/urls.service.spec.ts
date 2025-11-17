@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { UrlsService } from '../urls.service';
 import { UrlsRepository } from '../urls.repository';
 import { ClicksService } from '../../clicks/clicks.service';
@@ -238,14 +243,14 @@ describe('UrlsService', () => {
       await expect(service.update(id, newUrl)).rejects.toThrow(NotFoundException);
     });
 
-    it('deve lançar ConflictException quando usuário não é dono', async () => {
+    it('deve lançar ForbiddenException quando usuário não é dono', async () => {
       const id = mockShortUrl.id;
       const newUrl = 'https://new-example.com';
       const wrongUserId = 'wrong-user-id';
 
       urlsRepository.findById.mockResolvedValue(mockShortUrl);
 
-      await expect(service.update(id, newUrl, wrongUserId)).rejects.toThrow(ConflictException);
+      await expect(service.update(id, newUrl, wrongUserId)).rejects.toThrow(ForbiddenException);
     });
 
     it('deve permitir atualização sem userId (público)', async () => {
@@ -285,13 +290,13 @@ describe('UrlsService', () => {
       await expect(service.delete(id)).rejects.toThrow(NotFoundException);
     });
 
-    it('deve lançar ConflictException quando usuário não é dono', async () => {
+    it('deve lançar ForbiddenException quando usuário não é dono', async () => {
       const id = mockShortUrl.id;
       const wrongUserId = 'wrong-user-id';
 
       urlsRepository.findById.mockResolvedValue(mockShortUrl);
 
-      await expect(service.delete(id, wrongUserId)).rejects.toThrow(ConflictException);
+      await expect(service.delete(id, wrongUserId)).rejects.toThrow(ForbiddenException);
     });
   });
 
