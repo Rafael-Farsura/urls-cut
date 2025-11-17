@@ -2,7 +2,29 @@
 
 ## Quick Start
 
-### Desenvolvimento
+### Monorepo (Recomendado)
+
+```bash
+# Subir todos os serviços (PostgreSQL + Auth Service + URL Service + API Gateway)
+docker-compose -f docker-compose.monorepo.yml up -d
+
+# Ver logs
+docker-compose -f docker-compose.monorepo.yml logs -f
+
+# Parar serviços
+docker-compose -f docker-compose.monorepo.yml down
+```
+
+**Acessar:**
+- **API Gateway**: http://localhost:8080 (ponto único de entrada)
+- **Auth Service**: http://localhost:3001
+- **URL Service**: http://localhost:3002
+
+Para mais detalhes, consulte [README_MONOREPO.md](./README_MONOREPO.md).
+
+### Aplicação Monolítica
+
+#### Desenvolvimento
 
 ```bash
 # Subir ambiente completo (PostgreSQL + App)
@@ -12,7 +34,7 @@ docker-compose -f docker-compose.dev.yml up
 npm run docker:dev
 ```
 
-### Produção
+#### Produção
 
 ```bash
 # Subir ambiente de produção
@@ -27,14 +49,40 @@ docker-compose down
 
 ## Serviços
 
-### PostgreSQL
+### Monorepo
+
+#### PostgreSQL
 - **Porta**: 5432
 - **Usuário**: postgres
 - **Senha**: postgres (desenvolvimento)
 - **Banco**: url_shortener
 - **Volume**: `postgres_data` (dados persistentes)
 
-### Aplicação NestJS
+#### Auth Service
+- **Porta**: 3001
+- **Health Check**: `http://localhost:3001/health`
+- **Swagger**: `http://localhost:3001/api-docs`
+
+#### URL Service
+- **Porta**: 3002
+- **Health Check**: `http://localhost:3002/health`
+- **Swagger**: `http://localhost:3002/api-docs`
+
+#### API Gateway (KrakenD)
+- **Porta**: 8080
+- **Health Check**: `http://localhost:8080/health` (agregado)
+- **Swagger**: `http://localhost:8080/api-docs` (via gateway)
+
+### Aplicação Monolítica
+
+#### PostgreSQL
+- **Porta**: 5432
+- **Usuário**: postgres
+- **Senha**: postgres (desenvolvimento)
+- **Banco**: url_shortener
+- **Volume**: `postgres_data` (dados persistentes)
+
+#### Aplicação NestJS
 - **Porta**: 3000
 - **Health Check**: `http://localhost:3000/health`
 - **Hot Reload**: Ativado em desenvolvimento

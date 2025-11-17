@@ -19,9 +19,9 @@ export default registerAs(
     database: process.env.DB_NAME || 'url_shortener',
     ssl: process.env.DB_SSL === 'true',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    migrations: [__dirname + '/../../database/migrations/*{.ts,.js}'],
-    synchronize: process.env.NODE_ENV === 'development',
+    migrations: [], // Desabilitar migrações TypeScript - usar schema.sql diretamente
+    synchronize: true, // Usar synchronize temporariamente para criar tabelas (apenas primeira vez)
     logging: process.env.NODE_ENV === 'development',
-    migrationsRun: false,
+    migrationsRun: false, // Desabilitar execução automática de migrações
   }),
 );

@@ -4,6 +4,19 @@ Este documento lista todas as tags de versão criadas no projeto, seguindo [Sema
 
 ## Versões Disponíveis
 
+### v0.8.0 - 2025-11-17
+**Commit:** `[será atualizado após commit]`  
+**Descrição:** Monorepo e API Gateway  
+**Principais mudanças:**
+- Monorepo completamente implementado e funcional
+- Auth Service (porta 3001)
+- URL Service (porta 3002)
+- Pacote shared
+- API Gateway KrakenD (porta 8080)
+- Docker Compose para monorepo
+- Documentação completa atualizada
+- Coleção Postman atualizada
+
 ### v0.7.1 - 2025-11-17
 **Commit:** `f37cc0e`  
 **Descrição:** Correções de testes e melhorias  
@@ -116,7 +129,7 @@ O projeto segue [Semantic Versioning](https://semver.org/lang/pt-BR/):
 
 ## Próximas Versões Planejadas
 
-- **v0.8.0**: Melhorias de performance e otimizações
+- **v0.9.0**: Melhorias de performance e otimizações
 - **v1.0.0**: Versão estável para produção
 
 ---

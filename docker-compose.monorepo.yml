@@ -11,6 +11,7 @@ services:
       - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
       interval: 10s
@@ -21,8 +22,8 @@ services:
 
   auth-service:
     build:
-      context: ./services/auth-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./services/auth-service/Dockerfile
     container_name: urls-cut-auth-service
     restart: unless-stopped
     ports:
@@ -59,8 +60,8 @@ services:
 
   url-service:
     build:
-      context: ./services/url-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./services/url-service/Dockerfile
     container_name: urls-cut-url-service
     restart: unless-stopped
     ports:
@@ -113,7 +114,7 @@ services:
     environment:
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
     command:
-      ["/usr/bin/krakend", "run", "-c", "/etc/krakend/krakend.json", "-d"]
+      ["/bin/sh", "/etc/krakend/start-krakend.sh"]
     depends_on:
       - auth-service
       - url-service

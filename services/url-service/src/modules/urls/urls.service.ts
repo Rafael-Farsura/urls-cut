@@ -27,7 +27,7 @@ export class UrlsService {
     private readonly clicksService: ClicksService,
   ) {
     this.codeGenerator = this.generatorFactory.create();
-    this.apiBaseUrl = this.configService.get<string>('app.apiBaseUrl') || 'http://localhost:3000';
+    this.apiBaseUrl = this.configService.get<string>('app.apiBaseUrl') || 'http://localhost:8080';
   }
 
   /**

@@ -2,7 +2,42 @@
 
 ## Visão Geral
 
-Sistema de encurtamento de URLs construído com **NestJS**, seguindo os princípios SOLID e padrões de design adequados para escalabilidade vertical.
+Sistema de encurtamento de URLs construído com **NestJS** em **arquitetura de monorepo** com **API Gateway**, seguindo os princípios SOLID e padrões de design adequados para escalabilidade vertical.
+
+## Arquitetura de Monorepo
+
+O sistema foi migrado para uma arquitetura de monorepo com separação de serviços:
+
+```
+┌─────────────┐
+│   Cliente   │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────┐
+│  API Gateway    │  ← KrakenD (Porta 8080)
+│  (KrakenD)      │
+└──────┬───────────┘
+       │
+       ├──→ Auth Service (Porta 3001)
+       │     - Autenticação
+       │     - Gerenciamento de usuários
+       │     - JWT generation/validation
+       │
+       └──→ URL Service (Porta 3002)
+             - Encurtamento de URLs
+             - Gerenciamento de URLs (CRUD)
+             - Redirecionamento
+             - Contabilização de cliques
+```
+
+### Benefícios da Arquitetura de Monorepo
+
+- **Separação de Responsabilidades**: Cada serviço tem uma responsabilidade clara
+- **Escalabilidade Independente**: Serviços podem ser escalados separadamente
+- **Desenvolvimento Paralelo**: Equipes podem trabalhar em serviços diferentes
+- **API Gateway**: Ponto único de entrada com validação JWT, rate limiting e roteamento
+- **Código Compartilhado**: Pacote `shared` para código comum entre serviços
 
 ## Arquitetura NestJS
 

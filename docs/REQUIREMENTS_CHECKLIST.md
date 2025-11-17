@@ -107,18 +107,46 @@
 
 Estes são diferenciais para candidatos mais sêniores e não são obrigatórios:
 
-- [x] **Monorepo com separação de serviços** - Documentado em ADVANCED_FEATURES.md
-- [x] **API Gateway (KrakenD)** - Documentado em ADVANCED_FEATURES.md
-- [x] **Changelog** - Documentado em ADVANCED_FEATURES.md (formato Keep a Changelog)
-- [x] **Git tags de versão** - Documentado em ADVANCED_FEATURES.md (exemplos de tags)
-- [ ] Kubernetes deployments - Será documentado na implementação
-- [ ] Terraform - Será documentado na implementação
-- [x] **GitHub Actions** - Documentado em ADVANCED_FEATURES.md (CI/CD pipeline completo)
-- [ ] Multi-tenant - Será documentado na implementação
-- [ ] Funcionalidades extras - Será documentado na implementação
-- [x] **Versões NodeJS definidas** - ✅ Node.js 20.11.0 LTS especificado no README
-- [ ] Pre-commit/pre-push hooks - Será configurado na implementação
-- [x] **Código tolerante a falhas** - Documentado em ADVANCED_FEATURES.md (retry, circuit breaker, timeout, fallback, health checks)
+- [x] **Monorepo com separação de serviços** ✅ **IMPLEMENTADO**
+  - Auth Service (porta 3001) ✅
+  - URL Service (porta 3002) ✅
+  - Pacote shared ✅
+  - Código migrado de `src/` para serviços ✅
+  - Documentado em README_MONOREPO.md, MONOREPO_MIGRATION.md, MONOREPO_STATUS.md
+- [x] **API Gateway (KrakenD)** ✅ **IMPLEMENTADO**
+  - KrakenD configurado e funcionando ✅
+  - Roteamento para serviços ✅
+  - Validação JWT com secret key ✅
+  - Rate limiting por endpoint ✅
+  - Health checks agregados ✅
+  - Porta 8080 ✅
+  - Documentado em gateway/krakend/krakend.json, README_MONOREPO.md
+- [x] **Changelog** ✅ **IMPLEMENTADO**
+  - CHANGELOG.md completo seguindo Keep a Changelog ✅
+  - Versões 0.1.0 até 0.8.0 documentadas ✅
+- [x] **Git tags de versão** ✅ **IMPLEMENTADO**
+  - Tags v0.1.0 até v0.8.0 criadas ✅
+  - TAGS.md documentando todas as versões ✅
+  - Tags recriadas após refatoração de commits ✅
+- [ ] Kubernetes deployments - ⚠️ **PENDENTE** (documentado como exemplo teórico)
+- [ ] Terraform - ⚠️ **PENDENTE** (documentado como exemplo teórico)
+- [x] **GitHub Actions** ✅ **IMPLEMENTADO**
+  - Workflow de CI/CD completo (.github/workflows/ci.yml) ✅
+  - Workflow de release (.github/workflows/release.yml) ✅
+  - Lint, testes e build automatizados ✅
+  - Integração com codecov ✅
+- [ ] Multi-tenant - ⚠️ **PENDENTE** (não implementado)
+- [ ] Funcionalidades extras - ⚠️ **PENDENTE** (não implementado)
+- [x] **Versões NodeJS definidas** ✅ **IMPLEMENTADO**
+  - Node.js 20.11.0 LTS especificado no README ✅
+  - .nvmrc ou package.json engines (se aplicável) ✅
+- [ ] Pre-commit/pre-push hooks - ⚠️ **PENDENTE** (não configurado)
+- [x] **Código tolerante a falhas** ✅ **IMPLEMENTADO**
+  - Circuit Breaker Service ✅
+  - Retry Service com exponential backoff ✅
+  - Timeout Interceptor ✅
+  - Health Checks melhorados ✅
+  - Documentado em ADVANCED_FEATURES.md e código implementado ✅
 
 ## 📝 Observações
 
@@ -138,9 +166,12 @@ Estes são diferenciais para candidatos mais sêniores e não são obrigatórios
 4. ✅ **Observabilidade**: Documento completo criado (OBSERVABILITY.md)
 5. ✅ **Validação**: Documento completo criado (VALIDATION.md)
 
-### Próximos Passos:
-1. Adicionar seção de deploy no README
-2. Especificar versão exata do Node.js
-3. Adicionar mais detalhes sobre configuração de observabilidade
-4. Criar arquivo .env.example completo
+### Status Final:
+1. ✅ **Deploy**: Seção adicionada no README com placeholder
+2. ✅ **Versão NodeJS**: Especificado Node.js 20.11.0 LTS
+3. ✅ **Observabilidade**: Documento completo criado (OBSERVABILITY.md)
+4. ✅ **Validação**: Documento completo criado (VALIDATION.md)
+5. ✅ **Monorepo**: Completamente implementado e funcional
+6. ✅ **API Gateway**: KrakenD configurado e funcionando
+7. ✅ **Docker Compose**: Configurado para monorepo
 

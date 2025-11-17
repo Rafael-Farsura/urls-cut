@@ -19,7 +19,7 @@
         }
       ],
       "extra_config": {
-        "qos/ratelimit/router": {
+        "qos/rate_limit/router": {
           "max_rate": 10,
           "capacity": 10,
           "strategy": "ip"
@@ -39,7 +39,7 @@
         }
       ],
       "extra_config": {
-        "qos/ratelimit/router": {
+        "qos/rate_limit/router": {
           "max_rate": 20,
           "capacity": 20,
           "strategy": "ip"
@@ -50,6 +50,7 @@
       "endpoint": "/api/urls",
       "method": "GET",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/api/urls",
@@ -61,13 +62,14 @@
       "extra_config": {
         "auth/validator": {
           "alg": "HS256",
-          "secret": "${JWT_SECRET}",
+          "secret": "your-super-secret-jwt-key-change-in-production",
           "cache": true,
           "cache_duration": 3600,
           "issuer": "urls-cut",
-          "audience": ["urls-cut-api"]
+          "audience": ["urls-cut-api"],
+          "propagate_claims": [["sub", "X-User-Id"]]
         },
-        "qos/ratelimit/router": {
+        "qos/rate_limit/router": {
           "max_rate": 100,
           "capacity": 100,
           "strategy": "ip"
@@ -78,16 +80,22 @@
       "endpoint": "/api/urls",
       "method": "POST",
       "output_encoding": "json",
+      "input_headers": ["Authorization", "Content-Type"],
       "backend": [
         {
           "url_pattern": "/api/urls",
           "encoding": "json",
           "sd": "static",
-          "host": ["http://url-service:3002"]
+          "host": ["http://url-service:3002"],
+          "extra_config": {
+            "backend/http": {
+              "return_error_details": "url-service"
+            }
+          }
         }
       ],
       "extra_config": {
-        "qos/ratelimit/router": {
+        "qos/rate_limit/router": {
           "max_rate": 100,
           "capacity": 100,
           "strategy": "ip"
@@ -98,6 +106,7 @@
       "endpoint": "/api/urls/{id}",
       "method": "PUT",
       "output_encoding": "json",
+      "input_headers": ["Authorization", "Content-Type"],
       "backend": [
         {
           "url_pattern": "/api/urls/{id}",
@@ -109,13 +118,14 @@
       "extra_config": {
         "auth/validator": {
           "alg": "HS256",
-          "secret": "${JWT_SECRET}",
+          "secret": "your-super-secret-jwt-key-change-in-production",
           "cache": true,
           "cache_duration": 3600,
           "issuer": "urls-cut",
-          "audience": ["urls-cut-api"]
+          "audience": ["urls-cut-api"],
+          "propagate_claims": [["sub", "X-User-Id"]]
         },
-        "qos/ratelimit/router": {
+        "qos/rate_limit/router": {
           "max_rate": 50,
           "capacity": 50,
           "strategy": "ip"
@@ -126,6 +136,7 @@
       "endpoint": "/api/urls/{id}",
       "method": "DELETE",
       "output_encoding": "json",
+      "input_headers": ["Authorization"],
       "backend": [
         {
           "url_pattern": "/api/urls/{id}",
@@ -137,13 +148,14 @@
       "extra_config": {
         "auth/validator": {
           "alg": "HS256",
-          "secret": "${JWT_SECRET}",
+          "secret": "your-super-secret-jwt-key-change-in-production",
           "cache": true,
           "cache_duration": 3600,
           "issuer": "urls-cut",
-          "audience": ["urls-cut-api"]
+          "audience": ["urls-cut-api"],
+          "propagate_claims": [["sub", "X-User-Id"]]
         },
-        "qos/ratelimit/router": {
+        "qos/rate_limit/router": {
           "max_rate": 50,
           "capacity": 50,
           "strategy": "ip"
@@ -163,7 +175,7 @@
         }
       ],
       "extra_config": {
-        "qos/ratelimit/router": {
+        "qos/rate_limit/router": {
           "max_rate": 1000,
           "capacity": 1000,
           "strategy": "ip"
@@ -191,4 +203,3 @@
     }
   ]
 }
-

@@ -18,6 +18,7 @@ Este documento explica como testar o API Gateway (KrakenD) e os workflows de CI/
 1. Docker e Docker Compose instalados
 2. Monorepo rodando: `docker compose -f docker-compose.monorepo.yml up -d`
 3. Aguardar todos os serviços estarem saudáveis (verificar com `docker ps`)
+4. **Base URL**: `http://localhost:8080` (API Gateway - ponto único de entrada)
 
 ### Método 1: Script Automatizado (Recomendado)
 

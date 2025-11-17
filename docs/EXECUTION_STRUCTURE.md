@@ -1,10 +1,37 @@
 # Estrutura de Execução do Sistema
 
-## Fluxo de Execução Geral (NestJS)
+## Fluxo de Execução Geral (Monorepo com API Gateway)
+
+### Inicialização do Sistema
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    INICIALIZAÇÃO (main.ts)                   │
+│              INICIALIZAÇÃO DO MONOREPO                        │
+├─────────────────────────────────────────────────────────────┤
+│  1. Docker Compose inicia PostgreSQL                        │
+│  2. Auth Service inicia (porta 3001)                        │
+│     - Carrega variáveis de ambiente                         │
+│     - Conecta ao PostgreSQL                                 │
+│     - Configura TypeORM (apenas entidade User)              │
+│     - Inicia servidor NestJS                                │
+│  3. URL Service inicia (porta 3002)                          │
+│     - Carrega variáveis de ambiente                         │
+│     - Conecta ao PostgreSQL                                 │
+│     - Configura TypeORM (entidades ShortUrl, Click)         │
+│     - Inicia servidor NestJS                                │
+│  4. API Gateway (KrakenD) inicia (porta 8080)               │
+│     - Carrega configuração (krakend.json)                   │
+│     - Configura roteamento para serviços                    │
+│     - Configura validação JWT                               │
+│     - Configura rate limiting                               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Inicialização de um Serviço (NestJS)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              INICIALIZAÇÃO DE SERVIÇO (main.ts)              │
 ├─────────────────────────────────────────────────────────────┤
 │  1. Carregar variáveis de ambiente (@nestjs/config)         │
 │  2. Criar aplicação NestJS (NestFactory.create)              │
@@ -20,11 +47,61 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Fluxo de Requisição HTTP (NestJS)
+## Fluxo de Requisição HTTP (Monorepo com API Gateway)
+
+### Fluxo Completo (com API Gateway)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    REQUEST PIPELINE (NestJS)                 │
+│              REQUEST PIPELINE (Monorepo)                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  HTTP Request (Cliente)                                      │
+│       │                                                      │
+│       ▼                                                      │
+│  ┌─────────────────────┐                                    │
+│  │  API Gateway        │  ← KrakenD (Porta 8080)           │
+│  │  (KrakenD)          │                                    │
+│  └──────────┬──────────┘                                    │
+│             │                                                │
+│             ├─→ Validação JWT (se endpoint protegido)       │
+│             ├─→ Rate Limiting                               │
+│             ├─→ Roteamento para serviço                     │
+│             │                                                │
+│             ├─→ Auth Service (3001) ou                      │
+│             └─→ URL Service (3002)                          │
+│                     │                                        │
+│                     ▼                                        │
+│  ┌─────────────────────────────────────┐                    │
+│  │  REQUEST PIPELINE (NestJS Service)   │                    │
+│  ├─────────────────────────────────────┤                    │
+│  │  Global Middleware (CORS, Body)     │                    │
+│  │  Module Router                      │                    │
+│  │  Guard (CanActivate)                │                    │
+│  │  Interceptor (before)               │                    │
+│  │  Pipe (ValidationPipe)              │                    │
+│  │  Controller Handler                 │                    │
+│  │    └─→ Service Layer                │                    │
+│  │        └─→ Repository (TypeORM)     │                    │
+│  │            └─→ Database             │                    │
+│  │  Interceptor (after)                │                    │
+│  │  Exception Filter                   │                    │
+│  └─────────────────────────────────────┘                    │
+│             │                                                │
+│             ▼                                                │
+│  API Gateway (agrega/transforma resposta)                    │
+│             │                                                │
+│             ▼                                                │
+│  HTTP Response (Cliente)                                     │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Fluxo de Requisição Direto ao Serviço (sem Gateway)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              REQUEST PIPELINE (NestJS Service)               │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  HTTP Request                                                │

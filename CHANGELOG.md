@@ -5,31 +5,47 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
-## [Não Lançado]
+## [0.8.0] - 2025-11-17
 
 ### Added
 
-- ✅ **Monorepo completamente implementado**
+- ✅ **Monorepo completamente implementado e funcional**
   - Auth Service (porta 3001) - Autenticação e gerenciamento de usuários
   - URL Service (porta 3002) - Encurtamento e gerenciamento de URLs
   - Pacote shared - Código compartilhado entre serviços
   - Código migrado de `src/` para serviços correspondentes
-- ✅ **API Gateway KrakenD completamente configurado**
+  - Dockerfiles para cada serviço
+  - Configurações TypeScript e NestJS CLI por serviço
+- ✅ **API Gateway KrakenD completamente configurado e funcional**
   - Roteamento para auth-service e url-service
   - Validação de JWT com secret key (HS256)
   - Rate limiting por endpoint configurado
-  - Health checks agregados
-  - Porta 8080
+  - Health checks agregados (combina respostas de ambos os serviços)
+  - Porta 8080 (ponto único de entrada)
+  - Cache configurado (300s)
+  - Timeout configurado (3000ms)
 - ✅ **Docker Compose para monorepo** (docker-compose.monorepo.yml)
   - PostgreSQL compartilhado
   - Auth Service containerizado
   - URL Service containerizado
   - API Gateway (KrakenD) containerizado
-- ✅ **Documentação completa**
-  - MONOREPO_MIGRATION.md - Guia de migração
+  - Health checks configurados
+  - Dependências entre serviços
+- ✅ **Documentação completa atualizada**
+  - README.md atualizado com informações do monorepo
   - README_MONOREPO.md - Documentação do monorepo
+  - MONOREPO_MIGRATION.md - Guia de migração
   - MONOREPO_STATUS.md - Status da implementação
-  - .env.monorepo.example - Variáveis de ambiente
+  - API_SPECIFICATION.md atualizado com porta 8080
+  - ARCHITECTURE.md atualizado com arquitetura de monorepo
+  - PROJECT_STRUCTURE.md atualizado com estrutura de monorepo
+  - EXECUTION_STRUCTURE.md atualizado com fluxo do gateway
+  - DIAGRAMS.md atualizado com diagramas do monorepo
+  - ADVANCED_FEATURES.md marcado como implementado
+  - REQUIREMENTS_CHECKLIST.md atualizado
+  - FEATURES_VERIFICATION.md atualizado
+  - Coleção Postman atualizada (base_url = http://localhost:8080)
+  - postman/README.md atualizado
 
 ### Changed
 
@@ -38,6 +54,18 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Portas ajustadas: 3001 (auth), 3002 (url), 8080 (gateway)
 - DatabaseModule configurado separadamente para cada serviço
 - AppModule e main.ts criados para cada serviço
+- Base URL da API atualizada para porta 8080 (API Gateway)
+- Todas as documentações atualizadas para refletir monorepo
+
+### Fixed
+
+- Correção de moduleResolution no TypeScript (node16 → node) para compatibilidade com NestJS
+- Build errors do monorepo resolvidos
+- Imports relativos corrigidos nos serviços
+- Correção de sintaxe JSON no krakend.json (vírgulas extras removidas)
+- Correção de erro "invalid status code" no KrakenD para requisições POST
+- Configuração do KrakenD para passar corretamente o body em requisições POST/PUT
+- Adicionado Content-Type aos input_headers para garantir passagem do body
 
 ## [0.7.1] - 2025-11-17
 

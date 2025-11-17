@@ -19,12 +19,21 @@ Sistema de encurtamento de URLs construído com Node.js, seguindo os princípios
 
 ## 🎯 Sobre o Projeto
 
-Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
+Sistema REST API para encurtamento de URLs construído com **arquitetura de monorepo** e **API Gateway**, seguindo os princípios SOLID e padrões de design adequados para escalabilidade vertical.
 
-**Implementado (v0.7.0):**
+**Implementado (v0.8.0 - Monorepo):**
 
+- ✅ **Monorepo com separação de serviços**
+  - Auth Service (porta 3001) - Autenticação e gerenciamento de usuários
+  - URL Service (porta 3002) - Encurtamento e gerenciamento de URLs
+  - Pacote shared - Código compartilhado entre serviços
+- ✅ **API Gateway KrakenD** (porta 8080)
+  - Roteamento para auth-service e url-service
+  - Validação de JWT com secret key (HS256)
+  - Rate limiting por endpoint configurado
+  - Health checks agregados
 - ✅ Estrutura base do projeto NestJS
-- ✅ Configuração Docker e Docker Compose (dev e prod)
+- ✅ Configuração Docker e Docker Compose (dev, prod e monorepo)
 - ✅ Banco de dados PostgreSQL com TypeORM
 - ✅ Entidades: User, ShortUrl, Click
 - ✅ Migrações de banco de dados
@@ -46,7 +55,7 @@ Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 - ✅ LoggingInterceptor para observabilidade
 - ✅ Métricas Prometheus (GET /metrics)
 - ✅ Documentação Swagger/OpenAPI (GET /api-docs)
-- ✅ Testes unitários completos (66 testes, ~80% cobertura)
+- ✅ Testes unitários completos (99 testes, ~85% cobertura)
 - ✅ Testes E2E para todas as rotas
 - ✅ Coleção Postman completa
 - ✅ **Circuit Breaker** para tolerância a falhas
@@ -54,6 +63,8 @@ Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 - ✅ **Timeout Interceptor** para requisições
 - ✅ **Rate Limiting** com ThrottlerModule
 - ✅ **GitHub Actions** workflows (CI/CD e Release)
+- ✅ **Changelog** completo seguindo Keep a Changelog
+- ✅ **Git Tags** de versão (v0.1.0 até v0.8.0)
 
 ## 🛠 Tecnologias
 
@@ -69,39 +80,56 @@ Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 
 ## 📁 Estrutura do Projeto
 
+O projeto utiliza **arquitetura de monorepo** com separação de serviços:
+
 ```
 urls-cut/
-├── src/
-│   ├── modules/              # Módulos NestJS
-│   │   ├── auth/           # Módulo de autenticação
-│   │   ├── users/          # Módulo de usuários
-│   │   ├── urls/           # Módulo de URLs
-│   │   └── clicks/         # Módulo de cliques
-│   ├── common/             # Recursos compartilhados
-│   │   ├── decorators/     # Decorators customizados
-│   │   ├── filters/        # Exception filters
-│   │   ├── guards/         # Guards (auth, roles)
-│   │   ├── interceptors/   # Interceptors
-│   │   ├── pipes/          # Pipes de validação
-│   │   └── strategies/     # Strategy pattern
-│   ├── config/             # Configurações
-│   ├── database/           # Configuração TypeORM
-│   └── main.ts             # Bootstrap da aplicação
+├── services/                    # Serviços do monorepo
+│   ├── auth-service/          # Serviço de autenticação (porta 3001)
+│   │   ├── src/
+│   │   │   ├── modules/
+│   │   │   │   ├── auth/      # Autenticação
+│   │   │   │   └── users/     # Usuários
+│   │   │   ├── common/        # Recursos compartilhados
+│   │   │   └── config/        # Configurações
+│   │   ├── Dockerfile
+│   │   └── package.json
+│   └── url-service/           # Serviço de URLs (porta 3002)
+│       ├── src/
+│       │   ├── modules/
+│       │   │   ├── urls/      # URLs
+│       │   │   └── clicks/    # Cliques
+│       │   ├── common/
+│       │   └── config/
+│       ├── Dockerfile
+│       └── package.json
+├── packages/                   # Pacotes compartilhados
+│   └── shared/                # Código compartilhado
+│       └── src/
+│           ├── common/        # Guards, decorators, filters, interceptors
+│           └── config/        # Configurações compartilhadas
+├── gateway/                    # API Gateway
+│   └── krakend/               # Configuração KrakenD
+│       └── krakend.json
+├── src/                        # Código legado (referência)
+│   └── modules/               # Módulos originais
 ├── database/
-│   └── schema.sql          # Database schema
-├── docs/
-│   ├── ARCHITECTURE.md     # Arquitetura detalhada
-│   ├── DIAGRAMS.md         # Diagramas do sistema
-│   └── DESIGN_PATTERNS.md  # Design patterns aplicados
-├── test/
-│   ├── unit/
-│   ├── integration/
-│   └── e2e/
-├── docker-compose.yml
+│   └── schema.sql             # Database schema
+├── docs/                       # Documentação completa
+│   ├── ARCHITECTURE.md
+│   ├── DIAGRAMS.md
+│   ├── DESIGN_PATTERNS.md
+│   └── ...
+├── test/                       # Testes E2E
+├── scripts/                    # Scripts de teste e automação
+├── docker-compose.yml          # Docker Compose original
+├── docker-compose.monorepo.yml # Docker Compose do monorepo
 ├── Dockerfile
 ├── .env.example
 └── README.md
 ```
+
+> **Nota**: O código em `src/` ainda existe para referência, mas o sistema principal está nos serviços do monorepo.
 
 ## 📋 Pré-requisitos
 
@@ -114,7 +142,7 @@ urls-cut/
 
 ## 🚀 Instalação
 
-### Opção 1: Docker Compose (Recomendado)
+### Opção 1: Monorepo com Docker Compose (Recomendado)
 
 ```bash
 # Clone o repositório
@@ -126,20 +154,35 @@ cp .env.example .env
 
 # Edite o .env com suas configurações (opcional para desenvolvimento)
 
+# Subir todos os serviços (PostgreSQL + Auth Service + URL Service + API Gateway)
+docker-compose -f docker-compose.monorepo.yml up -d
+
+# Ver logs
+docker-compose -f docker-compose.monorepo.yml logs -f
+
+# Parar serviços
+docker-compose -f docker-compose.monorepo.yml down
+```
+
+**Acessar Serviços:**
+- **API Gateway**: http://localhost:8080 (ponto único de entrada)
+- **Auth Service**: http://localhost:3001 (acesso direto)
+- **URL Service**: http://localhost:3002 (acesso direto)
+- **PostgreSQL**: localhost:5432
+
+> **Recomendado**: Use o API Gateway (porta 8080) para todas as requisições. Os serviços individuais (3001, 3002) são para desenvolvimento/debug.
+
+Para mais detalhes sobre o monorepo, consulte [README_MONOREPO.md](./README_MONOREPO.md).
+
+### Opção 2: Docker Compose Original (Aplicação Monolítica)
+
+```bash
 # Desenvolvimento (com hot reload)
 docker-compose -f docker-compose.dev.yml up
 
 # Ou produção
 docker-compose up -d
-
-# Execute as migrações (quando implementadas)
-docker-compose exec app npm run migration:run
-
-# Ver logs
-docker-compose logs -f app
 ```
-
-> **Nota**: Para desenvolvimento, use `docker-compose.dev.yml` que inclui hot reload. Para produção, use `docker-compose.yml`.
 
 Para mais detalhes sobre Docker, consulte [README_DOCKER.md](./README_DOCKER.md).
 
@@ -177,7 +220,7 @@ Crie um arquivo `.env` na raiz do projeto:
 # Server
 NODE_ENV=development
 PORT=3000
-API_BASE_URL=http://localhost:3000
+API_BASE_URL=http://localhost:8080  # URL do API Gateway
 
 # Database
 DB_HOST=localhost
@@ -344,7 +387,10 @@ npm run test:coverage
 
 A documentação completa da API está disponível via Swagger/OpenAPI:
 
-- **URL Local**: `http://localhost:3000/api-docs`
+**Monorepo (API Gateway):**
+- **URL Local**: `http://localhost:8080/api-docs` (via API Gateway)
+- **Auth Service**: `http://localhost:3001/api-docs`
+- **URL Service**: `http://localhost:3002/api-docs`
 - **URL Produção**: [Link será adicionado após deploy]
 
 A documentação Swagger inclui:
@@ -562,6 +608,11 @@ O projeto segue versionamento semântico:
 - **0.2.0**: Autenticação
 - **0.3.0**: Operações de usuário no encurtador
 - **0.4.0**: Contabilização de acessos
+- **0.5.0**: Redirecionamento e testes completos
+- **0.6.0**: Observabilidade e Swagger
+- **0.7.0**: Resiliência e CI/CD
+- **0.7.1**: Correções de testes e melhorias
+- **0.8.0**: Monorepo e API Gateway
 
 ## 🗺 Roadmap de Implementação
 

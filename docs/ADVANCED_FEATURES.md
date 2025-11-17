@@ -2,11 +2,13 @@
 
 Este documento descreve funcionalidades avançadas e diferenciais que podem ser implementados no sistema.
 
-## 1. API Gateway (KrakenD)
+## 1. API Gateway (KrakenD) ✅ IMPLEMENTADO
 
 ### Visão Geral
 
 O API Gateway atua como ponto único de entrada para todos os serviços, fornecendo roteamento, autenticação, rate limiting e outras funcionalidades cross-cutting.
+
+**Status:** ✅ **Completamente implementado e funcional**
 
 ### Arquitetura com API Gateway
 
@@ -17,13 +19,19 @@ O API Gateway atua como ponto único de entrada para todos os serviços, fornece
        │
        ▼
 ┌─────────────────┐
-│  API Gateway    │  ← KrakenD
+│  API Gateway    │  ← KrakenD (Porta 8080) ✅
 │  (KrakenD)      │
 └──────┬───────────┘
        │
-       ├──→ Auth Service (Identidade e Acesso)
-       ├──→ URL Service (Encurtamento)
-       └──→ Analytics Service (Estatísticas)
+       ├──→ Auth Service (Porta 3001) ✅
+       │     - Autenticação
+       │     - Gerenciamento de usuários
+       │
+       └──→ URL Service (Porta 3002) ✅
+             - Encurtamento de URLs
+             - Gerenciamento de URLs
+             - Redirecionamento
+             - Contabilização de cliques
 ```
 
 ### Benefícios
@@ -36,40 +44,135 @@ O API Gateway atua como ponto único de entrada para todos os serviços, fornece
 - **Cache**: Cache de respostas frequentes
 - **Monitoramento**: Métricas centralizadas
 
-### Configuração KrakenD
+### Configuração KrakenD ✅ IMPLEMENTADO
+
+**Arquivo:** `gateway/krakend/krakend.json`
 
 ```json
 {
   "version": 3,
+  "name": "URL Shortener API Gateway",
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "port": 8080,
   "endpoints": [
     {
-      "endpoint": "/api/auth/*",
-      "method": "GET,POST",
+      "endpoint": "/api/auth/register",
+      "method": "POST",
       "backend": [
         {
-          "url_pattern": "/auth/*",
+          "url_pattern": "/api/auth/register",
           "host": ["http://auth-service:3001"]
         }
-      ]
+      ],
+      "extra_config": {
+        "qos/rate_limit/router": {
+          "max_rate": 10,
+          "capacity": 10,
+          "strategy": "ip"
+        }
+      }
     },
     {
-      "endpoint": "/api/urls/*",
-      "method": "GET,POST,PUT,DELETE",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
       "backend": [
         {
-          "url_pattern": "/urls/*",
+          "url_pattern": "/api/auth/login",
+          "host": ["http://auth-service:3001"]
+        }
+      ],
+      "extra_config": {
+        "qos/rate_limit/router": {
+          "max_rate": 20,
+          "capacity": 20,
+          "strategy": "ip"
+        }
+      }
+    },
+    {
+      "endpoint": "/api/urls",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/api/urls",
           "host": ["http://url-service:3002"]
         }
       ],
       "extra_config": {
         "auth/validator": {
           "alg": "HS256",
-          "jwk_url": "http://auth-service:3001/.well-known/jwks.json"
+          "secret": "${JWT_SECRET}",
+          "cache": true,
+          "cache_duration": 3600
+        },
+        "qos/rate_limit/router": {
+          "max_rate": 100,
+          "capacity": 100,
+          "strategy": "ip"
         }
       }
     },
     {
-      "endpoint": "/:shortCode",
+      "endpoint": "/api/urls",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/api/urls",
+          "host": ["http://url-service:3002"]
+        }
+      ],
+      "extra_config": {
+        "qos/rate_limit/router": {
+          "max_rate": 100,
+          "capacity": 100,
+          "strategy": "ip"
+        }
+      }
+    },
+    {
+      "endpoint": "/api/urls/{id}",
+      "method": "PUT",
+      "backend": [
+        {
+          "url_pattern": "/api/urls/{id}",
+          "host": ["http://url-service:3002"]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "secret": "${JWT_SECRET}"
+        },
+        "qos/rate_limit/router": {
+          "max_rate": 50,
+          "capacity": 50
+        }
+      }
+    },
+    {
+      "endpoint": "/api/urls/{id}",
+      "method": "DELETE",
+      "backend": [
+        {
+          "url_pattern": "/api/urls/{id}",
+          "host": ["http://url-service:3002"]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "secret": "${JWT_SECRET}"
+        },
+        "qos/rate_limit/router": {
+          "max_rate": 50,
+          "capacity": 50
+        }
+      }
+    },
+    {
+      "endpoint": "/{shortCode}",
       "method": "GET",
       "backend": [
         {
@@ -78,83 +181,164 @@ O API Gateway atua como ponto único de entrada para todos os serviços, fornece
         }
       ],
       "extra_config": {
-        "qos/ratelimit/router": {
-          "max_rate": 100,
-          "capacity": 100
+        "qos/rate_limit/router": {
+          "max_rate": 1000,
+          "capacity": 1000
         }
       }
+    },
+    {
+      "endpoint": "/health",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/health",
+          "host": ["http://auth-service:3001"]
+        },
+        {
+          "url_pattern": "/health",
+          "host": ["http://url-service:3002"]
+        }
+      ]
     }
   ]
 }
 ```
 
-### Docker Compose com KrakenD
+**Características Implementadas:**
+- ✅ Roteamento para auth-service e url-service
+- ✅ Validação JWT com secret key (HS256) para endpoints protegidos
+- ✅ Rate limiting configurado por endpoint
+- ✅ Health check agregado (combina respostas de ambos os serviços)
+- ✅ Cache configurado (300s)
+- ✅ Timeout configurado (3000ms)
+
+### Docker Compose com KrakenD ✅ IMPLEMENTADO
+
+**Arquivo:** `docker-compose.monorepo.yml`
 
 ```yaml
-version: '3.8'
-
 services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: urls-cut-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-url_shortener}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: urls-cut-auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      DB_HOST: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      # ... outras variáveis
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  url-service:
+    build:
+      context: ./services/url-service
+      dockerfile: Dockerfile
+    container_name: urls-cut-url-service
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      DB_HOST: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_URL: http://auth-service:3001
+      # ... outras variáveis
+    depends_on:
+      postgres:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+
   api-gateway:
     image: devopsfaith/krakend:latest
+    container_name: urls-cut-api-gateway
     ports:
-      - '8080:8080'
+      - "8080:8080"
     volumes:
-      - ./krakend/:/etc/krakend/
-    command: ['/usr/bin/krakend', 'run', '-c', '/etc/krakend/krakend.json']
+      - ./gateway/krakend:/etc/krakend
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+    command:
+      ["/usr/bin/krakend", "run", "-c", "/etc/krakend/krakend.json", "-d"]
     depends_on:
       - auth-service
       - url-service
-
-  auth-service:
-    build: ./services/auth
-    ports:
-      - '3001:3001'
-    environment:
-      - DB_HOST=postgres
-      - JWT_SECRET=${JWT_SECRET}
-
-  url-service:
-    build: ./services/url
-    ports:
-      - '3002:3002'
-    environment:
-      - DB_HOST=postgres
-      - AUTH_SERVICE_URL=http://auth-service:3001
 ```
 
-## 2. Monorepo com Separação de Serviços
+**Status:** ✅ **Completamente implementado e testado**
+
+## 2. Monorepo com Separação de Serviços ✅ IMPLEMENTADO
 
 ### Estrutura do Monorepo
+
+**Status:** ✅ **Completamente implementado e funcional**
 
 ```
 urls-cut/
 ├── services/
-│   ├── auth-service/          # Serviço de Autenticação
+│   ├── auth-service/          # Serviço de Autenticação ✅
 │   │   ├── src/
+│   │   │   ├── modules/
+│   │   │   │   ├── auth/
+│   │   │   │   └── users/
+│   │   │   ├── common/
+│   │   │   ├── config/
+│   │   │   ├── database/
+│   │   │   ├── app.module.ts
+│   │   │   └── main.ts
 │   │   ├── package.json
-│   │   └── Dockerfile
-│   ├── url-service/           # Serviço de Encurtamento
-│   │   ├── src/
-│   │   ├── package.json
-│   │   └── Dockerfile
-│   └── analytics-service/    # Serviço de Analytics (futuro)
+│   │   ├── Dockerfile
+│   │   ├── tsconfig.json
+│   │   └── nest-cli.json
+│   └── url-service/          # Serviço de Encurtamento ✅
 │       ├── src/
+│       │   ├── modules/
+│       │   │   ├── urls/
+│       │   │   └── clicks/
+│       │   ├── common/
+│       │   ├── config/
+│       │   ├── database/
+│       │   ├── app.module.ts
+│       │   └── main.ts
 │       ├── package.json
-│       └── Dockerfile
+│       ├── Dockerfile
+│       ├── tsconfig.json
+│       └── nest-cli.json
 ├── packages/
-│   ├── shared/                # Código compartilhado
-│   │   ├── types/
-│   │   ├── utils/
-│   │   └── constants/
-│   └── database/              # Configuração de banco compartilhada
+│   └── shared/               # Código compartilhado ✅
+│       ├── src/
+│       │   ├── common/        # Guards, decorators, filters, interceptors
+│       │   ├── config/        # Configurações compartilhadas
+│       │   └── index.ts
+│       └── package.json
 ├── gateway/
-│   └── krakend/               # Configuração do API Gateway
-├── infrastructure/
-│   ├── kubernetes/
-│   ├── terraform/
-│   └── docker-compose.yml
-├── package.json               # Workspace root
-└── pnpm-workspace.yaml        # ou yarn workspaces
+│   └── krakend/               # Configuração do API Gateway ✅
+│       └── krakend.json
+├── docker-compose.monorepo.yml ✅
+├── package.json
+└── README_MONOREPO.md ✅
 ```
 
 ### Comunicação entre Serviços
@@ -798,3 +982,4 @@ export class FailureMonitor {
 - [GitHub Actions](https://docs.github.com/en/actions)
 - [Circuit Breaker Pattern](https://martinfowler.com/bliki/CircuitBreaker.html)
 - [Resilience Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
+

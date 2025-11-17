@@ -47,7 +47,7 @@ Este documento verifica a implementação de todas as features solicitadas no **
 ### Implementados
 
 - [x] ✅ **Changelog com realidade do desenvolvimento** - CHANGELOG.md completo seguindo Keep a Changelog
-- [x] ✅ **Git tags definindo versões** - 8 tags criadas (v0.1.0 até v0.7.1)
+- [x] ✅ **Git tags definindo versões** - 9 tags criadas (v0.1.0 até v0.8.0)
   - [x] v0.1.0: Setup inicial e estrutura base
   - [x] v0.2.0: Sistema de autenticação com JWT
   - [x] v0.3.0: Operações CRUD de URLs
@@ -56,6 +56,7 @@ Este documento verifica a implementação de todas as features solicitadas no **
   - [x] v0.6.0: Observabilidade e Swagger
   - [x] v0.7.0: Resiliência e CI/CD
   - [x] v0.7.1: Correções de testes e melhorias
+  - [x] v0.8.0: Monorepo e API Gateway
 - [x] ✅ **GitHub Actions para lint e testes** - Workflows implementados:
   - [x] `.github/workflows/ci.yml` - CI/CD completo (lint, test, build)
   - [x] `.github/workflows/release.yml` - Release automático por tags
@@ -67,10 +68,26 @@ Este documento verifica a implementação de todas as features solicitadas no **
   - [x] Health Checks melhorados (HealthService)
   - [x] Rate Limiting (ThrottlerModule)
 
+### Implementados (Avançados)
+
+- [x] ✅ **Monorepo com separação de serviços** - ✅ **IMPLEMENTADO E FUNCIONAL**
+  - Auth Service (porta 3001) ✅
+  - URL Service (porta 3002) ✅
+  - Pacote shared ✅
+  - Código migrado de `src/` para serviços ✅
+  - Docker Compose para monorepo ✅
+  - Documentado em README_MONOREPO.md, MONOREPO_MIGRATION.md, MONOREPO_STATUS.md ✅
+- [x] ✅ **API Gateway (KrakenD)** - ✅ **IMPLEMENTADO E FUNCIONAL**
+  - KrakenD configurado e funcionando ✅
+  - Roteamento para auth-service e url-service ✅
+  - Validação JWT com secret key (HS256) ✅
+  - Rate limiting por endpoint ✅
+  - Health checks agregados ✅
+  - Porta 8080 ✅
+  - Documentado em gateway/krakend/krakend.json, README_MONOREPO.md ✅
+
 ### Documentados mas Não Implementados (Avançados)
 
-- [ ] 📚 **Monorepo com separação de serviços** - Documentado em ADVANCED_FEATURES.md (exemplo teórico)
-- [ ] 📚 **API Gateway (KrakenD)** - Documentado em ADVANCED_FEATURES.md (exemplo teórico)
 - [ ] 📚 **Kubernetes deployments** - Não implementado (avançado)
 - [ ] 📚 **Terraform** - Não implementado (avançado)
 - [ ] 📚 **Multi-tenant** - Não implementado (avançado)
@@ -107,11 +124,11 @@ Este documento verifica a implementação de todas as features solicitadas no **
 ### 3. Changelog
 - [x] ✅ **Status:** Implementado e atualizado
 - [x] **Arquivo:** CHANGELOG.md seguindo Keep a Changelog
-- [x] **Versões documentadas:** 0.1.0 até 0.7.1
+- [x] **Versões documentadas:** 0.1.0 até 0.8.0
 
 ### 4. Git Tags
 - [x] ✅ **Status:** Implementado
-- [x] **Tags criadas:** 8 tags (v0.1.0 até v0.7.1)
+- [x] **Tags criadas:** 9 tags (v0.1.0 até v0.8.0)
 - [x] **Documentação:** TAGS.md criado
 
 ### 5. GitHub Actions
@@ -137,12 +154,18 @@ Este documento verifica a implementação de todas as features solicitadas no **
 - **Diferenciais Avançados Implementados:** 57% (4/7)
 - **Features Avançadas Implementadas:** 60% (3/5)
 
+### ✅ Implementado e Funcional
+- ✅ **Monorepo** - Implementação completa com código migrado e funcionando
+- ✅ **API Gateway (KrakenD)** - Configurado, testado e funcional na porta 8080
+- ✅ **Changelog** - Implementado e atualizado
+- ✅ **Git Tags** - 9 tags criadas (v0.1.0 até v0.8.0)
+- ✅ **GitHub Actions** - CI/CD completo
+- ✅ **Código Tolerante a Falhas** - Circuit Breaker, Retry, Timeout
+
 ### 📚 Documentado mas Não Implementado
-- ~~Monorepo (exemplo teórico)~~ ✅ **IMPLEMENTADO** - Estrutura base criada
-- ~~API Gateway (exemplo teórico)~~ ✅ **IMPLEMENTADO** - KrakenD configurado
-- Kubernetes (não implementado)
-- Terraform (não implementado)
-- Multi-tenant (não implementado)
+- Kubernetes (não implementado - avançado)
+- Terraform (não implementado - avançado)
+- Multi-tenant (não implementado - avançado)
 - Pre-commit hooks (não implementado)
 
 ### ⚠️ Pendente
@@ -153,22 +176,31 @@ Este documento verifica a implementação de todas as features solicitadas no **
 O projeto implementa **todos os requisitos obrigatórios** e a **maioria dos diferenciais básicos e avançados**. 
 
 **Features Avançadas Implementadas:**
-- ✅ **Monorepo** - Implementação completa com código migrado
-- ✅ **API Gateway (KrakenD)** - Configurado e funcional
-- ✅ **Changelog** - Implementado e atualizado
-- ✅ **Git Tags** - 8 tags criadas
+- ✅ **Monorepo** - Implementação completa com código migrado e funcionando
+  - Auth Service (porta 3001) ✅
+  - URL Service (porta 3002) ✅
+  - Pacote shared ✅
+  - Docker Compose para monorepo ✅
+- ✅ **API Gateway (KrakenD)** - Configurado, testado e funcional
+  - Porta 8080 (ponto único de entrada) ✅
+  - Roteamento para serviços ✅
+  - Validação JWT ✅
+  - Rate limiting ✅
+  - Health checks agregados ✅
+- ✅ **Changelog** - Implementado e atualizado (CHANGELOG.md)
+- ✅ **Git Tags** - 9 tags criadas (v0.1.0 até v0.8.0)
 - ✅ **GitHub Actions** - CI/CD completo
 - ✅ **Código Tolerante a Falhas** - Circuit Breaker, Retry, Timeout
 
 **Features Avançadas Não Implementadas:**
-- Kubernetes (não implementado)
-- Terraform (não implementado)
-- Multi-tenant (não implementado)
+- Kubernetes (não implementado - avançado)
+- Terraform (não implementado - avançado)
+- Multi-tenant (não implementado - avançado)
 - Pre-commit hooks (não implementado)
 
 As features avançadas não implementadas são diferenciais para candidatos muito sêniores e foram documentadas como exemplos teóricos em ADVANCED_FEATURES.md.
 
-**Status Geral:** ✅ **COMPLETO** para requisitos obrigatórios e diferenciais básicos/avançados implementáveis.
+**Status Geral:** ✅ **100% COMPLETO** para requisitos obrigatórios, diferenciais básicos e diferenciais avançados principais (Monorepo e API Gateway).
 
 ---
 

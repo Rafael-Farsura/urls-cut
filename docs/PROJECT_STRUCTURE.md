@@ -1,108 +1,127 @@
 # Estrutura do Projeto - NestJS
 
-## Estrutura de Diretórios Proposta
+## Estrutura de Diretórios (Monorepo)
 
 ```
 urls-cut/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                    # GitHub Actions
+├── services/                         # Serviços do monorepo
+│   ├── auth-service/                # Serviço de autenticação (porta 3001)
+│   │   ├── src/
+│   │   │   ├── modules/
+│   │   │   │   ├── auth/
+│   │   │   │   │   ├── auth.module.ts
+│   │   │   │   │   ├── auth.controller.ts
+│   │   │   │   │   ├── auth.service.ts
+│   │   │   │   │   ├── jwks.controller.ts  # JWKS endpoint para gateway
+│   │   │   │   │   ├── strategies/
+│   │   │   │   │   │   └── jwt.strategy.ts
+│   │   │   │   │   └── dto/
+│   │   │   │   │       ├── register.dto.ts
+│   │   │   │   │       └── login.dto.ts
+│   │   │   │   └── users/
+│   │   │   │       ├── users.module.ts
+│   │   │   │       ├── users.service.ts
+│   │   │   │       ├── users.repository.ts
+│   │   │   │       └── entities/
+│   │   │   │           └── user.entity.ts
+│   │   │   ├── common/              # Recursos compartilhados do serviço
+│   │   │   │   ├── decorators/
+│   │   │   │   ├── guards/
+│   │   │   │   ├── interceptors/
+│   │   │   │   └── filters/
+│   │   │   ├── config/
+│   │   │   ├── database/
+│   │   │   ├── modules/
+│   │   │   │   └── health/
+│   │   │   ├── app.module.ts
+│   │   │   └── main.ts
+│   │   ├── Dockerfile
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   └── nest-cli.json
+│   └── url-service/                 # Serviço de URLs (porta 3002)
+│       ├── src/
+│       │   ├── modules/
+│       │   │   ├── urls/
+│       │   │   │   ├── urls.module.ts
+│       │   │   │   ├── urls.controller.ts
+│       │   │   │   ├── urls.service.ts
+│       │   │   │   ├── urls.repository.ts
+│       │   │   │   ├── redirect.controller.ts
+│       │   │   │   ├── entities/
+│       │   │   │   │   └── short-url.entity.ts
+│       │   │   │   └── dto/
+│       │   │   │       ├── create-url.dto.ts
+│       │   │   │       └── update-url.dto.ts
+│       │   │   └── clicks/
+│       │   │       ├── clicks.module.ts
+│       │   │       ├── clicks.service.ts
+│       │   │       ├── clicks.repository.ts
+│       │   │       └── entities/
+│       │   │           └── click.entity.ts
+│       │   ├── common/
+│       │   ├── config/
+│       │   ├── database/
+│       │   ├── modules/
+│       │   │   ├── health/
+│       │   │   └── metrics/
+│       │   ├── app.module.ts
+│       │   └── main.ts
+│       ├── Dockerfile
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── nest-cli.json
+├── packages/                         # Pacotes compartilhados
+│   └── shared/                      # Código compartilhado entre serviços
+│       ├── src/
+│       │   ├── common/              # Guards, decorators, filters, interceptors
+│       │   │   ├── decorators/
+│       │   │   ├── guards/
+│       │   │   ├── interceptors/
+│       │   │   ├── filters/
+│       │   │   └── services/      # Circuit breaker, retry, etc.
+│       │   ├── config/            # Configurações compartilhadas
+│       │   └── index.ts
+│       └── package.json
+├── gateway/                         # API Gateway
+│   └── krakend/                    # Configuração KrakenD
+│       └── krakend.json           # Configuração de roteamento e validação JWT
+├── src/                             # Código legado (referência)
+│   └── modules/                     # Módulos originais (monolítico)
 ├── database/
-│   ├── migrations/                   # Migrações TypeORM
-│   │   └── 1234567890-CreateUsers.ts
-│   ├── seeds/                        # Seeds (dados iniciais)
-│   └── schema.sql                    # Schema completo
-├── docs/
-│   ├── ARCHITECTURE.md               # Documentação de arquitetura
-│   ├── DIAGRAMS.md                   # Diagramas do sistema
-│   ├── DESIGN_PATTERNS.md            # Design patterns aplicados
-│   ├── DATABASE_DESIGN.md            # Design do banco de dados
-│   ├── API_SPECIFICATION.md          # Especificação da API
-│   ├── EXECUTION_STRUCTURE.md        # Estrutura de execução
-│   └── PROJECT_STRUCTURE.md          # Este arquivo
-├── src/
-│   ├── modules/                      # Módulos NestJS
-│   │   ├── auth/
-│   │   │   ├── auth.module.ts        # Módulo de autenticação
-│   │   │   ├── auth.controller.ts    # Controller
-│   │   │   ├── auth.service.ts       # Service
-│   │   │   ├── strategies/           # Passport strategies
-│   │   │   │   └── jwt.strategy.ts
-│   │   │   └── dto/                  # DTOs
-│   │   │       ├── register.dto.ts
-│   │   │       └── login.dto.ts
-│   │   ├── users/
-│   │   │   ├── users.module.ts
-│   │   │   ├── users.service.ts
-│   │   │   ├── users.repository.ts    # TypeORM Repository
-│   │   │   └── entities/
-│   │   │       └── user.entity.ts
-│   │   ├── urls/
-│   │   │   ├── urls.module.ts
-│   │   │   ├── urls.controller.ts
-│   │   │   ├── urls.service.ts
-│   │   │   ├── urls.repository.ts
-│   │   │   ├── entities/
-│   │   │   │   └── short-url.entity.ts
-│   │   │   └── dto/
-│   │   │       ├── create-url.dto.ts
-│   │   │       └── update-url.dto.ts
-│   │   └── clicks/
-│   │       ├── clicks.module.ts
-│   │       ├── clicks.service.ts
-│   │       ├── clicks.repository.ts
-│   │       └── entities/
-│   │           └── click.entity.ts
-│   ├── common/                       # Recursos compartilhados
-│   │   ├── decorators/
-│   │   │   ├── user.decorator.ts     # @CurrentUser()
-│   │   │   └── public.decorator.ts    # @Public()
-│   │   ├── filters/
-│   │   │   └── http-exception.filter.ts
-│   │   ├── guards/
-│   │   │   └── jwt-auth.guard.ts      # Guard de autenticação
-│   │   ├── interceptors/
-│   │   │   ├── logging.interceptor.ts
-│   │   │   └── transform.interceptor.ts
-│   │   ├── pipes/
-│   │   │   └── validation.pipe.ts    # Pipe de validação
-│   │   └── strategies/               # Strategy Pattern
-│   │       └── short-code/
-│   │           ├── short-code-generator.interface.ts
-│   │           ├── hash-based.generator.ts
-│   │           └── random.generator.ts
-│   ├── config/                       # Configurações
-│   │   ├── database.config.ts        # Config TypeORM
-│   │   ├── jwt.config.ts             # Config JWT
-│   │   └── app.config.ts             # Config geral
-│   └── main.ts                       # Bootstrap da aplicação
-├── test/
-│   ├── unit/
-│   │   ├── services/
-│   │   ├── repositories/
-│   │   └── strategies/
-│   ├── integration/
-│   │   ├── auth.e2e-spec.ts
-│   │   ├── urls.e2e-spec.ts
-│   │   └── redirect.e2e-spec.ts
-│   └── helpers/
-│       ├── test-db.ts                # Setup de banco de testes
-│       └── fixtures.ts               # Dados de teste
-├── .env.example                      # Exemplo de variáveis de ambiente
-├── .gitignore
-├── .eslintrc.js                      # Configuração ESLint
-├── .prettierrc                       # Configuração Prettier
-├── nest-cli.json                     # Configuração NestJS CLI
-├── tsconfig.json                     # Configuração TypeScript
-├── package.json
-├── docker-compose.yml                # Docker Compose
-├── Dockerfile                        # Dockerfile da aplicação
-├── CHANGELOG.md                      # Changelog (Keep a Changelog format)
-├── README.md                         # Documentação principal
+│   ├── migrations/
+│   └── schema.sql                  # Schema completo
+├── docs/                            # Documentação completa
+│   ├── ARCHITECTURE.md
+│   ├── DIAGRAMS.md
+│   ├── DESIGN_PATTERNS.md
+│   ├── DATABASE_DESIGN.md
+│   ├── API_SPECIFICATION.md
+│   ├── EXECUTION_STRUCTURE.md
+│   └── PROJECT_STRUCTURE.md
+├── test/                            # Testes E2E
+│   ├── app.e2e-spec.ts
+│   ├── auth.e2e-spec.ts
+│   ├── urls.e2e-spec.ts
+│   └── resilience.e2e-spec.ts
+├── scripts/                         # Scripts de automação
+│   ├── test-gateway.sh            # Testes do API Gateway
+│   └── test-cicd.sh               # Verificação de CI/CD
+├── postman/                        # Coleção Postman
+│   ├── URLs-Cut.postman_collection.json
+│   └── URLs-Cut.postman_environment.json
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml                    # CI/CD pipeline
-│       └── release.yml               # Release automation
+│       ├── ci.yml                  # CI/CD pipeline
+│       └── release.yml             # Release automation
+├── docker-compose.yml              # Docker Compose (monolítico)
+├── docker-compose.monorepo.yml     # Docker Compose (monorepo)
+├── Dockerfile                      # Dockerfile (monolítico)
+├── .env.example
+├── CHANGELOG.md
+├── README.md
+├── README_MONOREPO.md             # Documentação do monorepo
+└── package.json
 ```
 
 ## Descrição dos Diretórios

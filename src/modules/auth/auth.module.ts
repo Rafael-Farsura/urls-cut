@@ -21,6 +21,8 @@ import * as jwt from 'jsonwebtoken';
           secret: configService.get<string>('jwt.secret') || 'secret',
           signOptions: {
             expiresIn,
+            issuer: 'urls-cut',
+            audience: 'urls-cut-api',
           } as jwt.SignOptions,
         };
       },

@@ -11,6 +11,7 @@ import { HealthModule } from './modules/health/health.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { UrlsModule } from './modules/urls/urls.module';
 import { ClicksModule } from './modules/clicks/clicks.module';
+import { AuthModule } from './common/auth/auth.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
@@ -43,6 +44,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     DatabaseModule,
     HealthModule,
     MetricsModule,
+    AuthModule,
     UrlsModule,
     ClicksModule,
   ],

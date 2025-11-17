@@ -2,9 +2,21 @@
 
 ## Base URL
 
+**Monorepo (API Gateway - Recomendado):**
+```
+http://localhost:8080
+```
+
+**Serviços Individuais:**
+- Auth Service: `http://localhost:3001`
+- URL Service: `http://localhost:3002`
+
+**Aplicação Monolítica (Legado):**
 ```
 http://localhost:3000
 ```
+
+> **Nota**: Para produção com monorepo, use sempre o API Gateway (porta 8080) como ponto único de entrada.
 
 ## Autenticação
 
@@ -114,7 +126,7 @@ Authorization: Bearer <token>  # Opcional
 {
   "id": "uuid",
   "originalUrl": "https://example.com/very/long/url",
-  "shortUrl": "http://localhost:3000/aZbKq7",
+  "shortUrl": "http://localhost:8080/aZbKq7",
   "shortCode": "aZbKq7",
   "userId": "uuid" | null,
   "createdAt": "2024-01-01T00:00:00.000Z"
@@ -150,7 +162,7 @@ Authorization: Bearer <token>
     {
       "id": "uuid",
       "originalUrl": "https://example.com/very/long/url",
-      "shortUrl": "http://localhost:3000/aZbKq7",
+      "shortUrl": "http://localhost:8080/aZbKq7",
       "shortCode": "aZbKq7",
       "clickCount": 42,
       "createdAt": "2024-01-01T00:00:00.000Z",
@@ -188,7 +200,7 @@ Authorization: Bearer <token>
 {
   "id": "uuid",
   "originalUrl": "https://example.com/new/url",
-  "shortUrl": "http://localhost:3000/aZbKq7",
+  "shortUrl": "http://localhost:8080/aZbKq7",
   "shortCode": "aZbKq7",
   "updatedAt": "2024-01-01T00:00:00.000Z"
 }
@@ -353,21 +365,21 @@ A API está na versão 1.0. Futuras versões podem ser adicionadas:
 
 1. **Registrar usuário:**
 ```bash
-curl -X POST http://localhost:3000/api/auth/register \
+curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com","password":"password123"}'
 ```
 
 2. **Login:**
 ```bash
-curl -X POST http://localhost:3000/api/auth/login \
+curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com","password":"password123"}'
 ```
 
 3. **Criar URL encurtado:**
 ```bash
-curl -X POST http://localhost:3000/api/urls \
+curl -X POST http://localhost:8080/api/urls \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{"originalUrl":"https://example.com/very/long/url"}'
@@ -375,18 +387,26 @@ curl -X POST http://localhost:3000/api/urls \
 
 4. **Listar URLs:**
 ```bash
-curl -X GET http://localhost:3000/api/urls \
+curl -X GET http://localhost:8080/api/urls \
   -H "Authorization: Bearer <token>"
 ```
 
 5. **Acessar URL encurtado:**
 ```bash
-curl -L http://localhost:3000/aZbKq7
+curl -L http://localhost:8080/aZbKq7
 ```
+
+> **Nota**: Os exemplos acima usam o API Gateway (porta 8080). Para acessar serviços individuais, use:
+> - Auth Service: `http://localhost:3001`
+> - URL Service: `http://localhost:3002`
+> - Aplicação Monolítica (legado): `http://localhost:3000`
 
 ## Documentação OpenAPI/Swagger
 
 A documentação completa está disponível em:
-- **URL**: `http://localhost:3000/api-docs`
+- **API Gateway**: `http://localhost:8080/api-docs` (agregado)
+- **Auth Service**: `http://localhost:3001/api-docs`
+- **URL Service**: `http://localhost:3002/api-docs`
+- **Aplicação Monolítica**: `http://localhost:3000/api-docs`
 - **Arquivo**: `docs/openapi.yaml` (a ser criado)
 

@@ -22,9 +22,12 @@ Esta pasta contém a coleção Postman completa para testar a API de encurtament
 
 1. No canto superior direito do Postman, selecione o ambiente **"URLs Cut - Local"**
 2. Verifique/ajuste as variáveis de ambiente:
-   - `base_url`: `http://localhost:3000` (padrão)
+   - `base_url`: `http://localhost:8080` (API Gateway - padrão para monorepo)
+     - Alternativas: `http://localhost:3001` (Auth Service) ou `http://localhost:3002` (URL Service)
    - `test_email`: Seu email de teste
    - `test_password`: Sua senha de teste
+
+> **Nota**: Para o monorepo, use sempre `http://localhost:8080` (API Gateway) como ponto único de entrada.
 
 ### 3. Executar Requisições
 
@@ -136,9 +139,17 @@ As seguintes variáveis são salvas automaticamente:
 
 ### Erro de conexão
 
-- Verifique se a API está rodando (`npm run start:dev`)
-- Confirme que a `base_url` está correta
-- Verifique se a porta 3000 está disponível
+- Verifique se os serviços estão rodando:
+  - Monorepo: `docker-compose -f docker-compose.monorepo.yml up -d`
+  - Monolítico: `npm run start:dev`
+- Confirme que a `base_url` está correta:
+  - Monorepo: `http://localhost:8080` (API Gateway)
+  - Monolítico: `http://localhost:3000`
+- Verifique se as portas estão disponíveis:
+  - 8080 (API Gateway)
+  - 3001 (Auth Service)
+  - 3002 (URL Service)
+  - 3000 (Aplicação monolítica)
 
 ## 📚 Documentação Adicional
 

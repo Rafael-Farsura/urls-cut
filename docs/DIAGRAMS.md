@@ -1,6 +1,72 @@
 # Diagramas do Sistema
 
-## 1. Diagrama de Classes
+## 1. Diagrama de Arquitetura do Monorepo
+
+```mermaid
+graph TB
+    subgraph "Cliente"
+        C[Cliente HTTP]
+    end
+    
+    subgraph "API Gateway"
+        AG[KrakenD<br/>Porta 8080]
+    end
+    
+    subgraph "Auth Service"
+        AS[Auth Service<br/>Porta 3001]
+        AM[AuthModule]
+        UM[UsersModule]
+        HM1[HealthModule]
+    end
+    
+    subgraph "URL Service"
+        US[URL Service<br/>Porta 3002]
+        URLM[UrlsModule]
+        CM[ClicksModule]
+        HM2[HealthModule]
+        MM[MetricsModule]
+    end
+    
+    subgraph "Shared Package"
+        SP[packages/shared]
+        CB[CircuitBreaker]
+        RT[RetryService]
+        LG[Guards]
+        DC[Decorators]
+    end
+    
+    subgraph "Database"
+        DB[(PostgreSQL<br/>Porta 5432)]
+    end
+    
+    C -->|HTTP| AG
+    AG -->|/api/auth/*| AS
+    AG -->|/api/urls/*| US
+    AG -->|/:shortCode| US
+    AG -->|/health| AS
+    AG -->|/health| US
+    
+    AS --> AM
+    AS --> UM
+    AS --> HM1
+    AS --> SP
+    
+    US --> URLM
+    US --> CM
+    US --> HM2
+    US --> MM
+    US --> SP
+    
+    AS -->|TypeORM| DB
+    US -->|TypeORM| DB
+    
+    SP --> CB
+    SP --> RT
+    SP --> LG
+    SP --> DC
+```
+
+## 2. Diagrama de Classes
 
 ```mermaid
 classDiagram

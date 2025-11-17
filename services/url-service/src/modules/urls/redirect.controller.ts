@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res, Req, NotFoundException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, Res, Req, NotFoundException, HttpStatus, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { UrlsService } from './urls.service';
@@ -12,6 +12,8 @@ import { Public } from '../../common/decorators/public.decorator';
 @ApiTags('urls')
 @Controller()
 export class RedirectController {
+  private readonly logger = new Logger(RedirectController.name);
+
   constructor(
     private readonly urlsService: UrlsService,
     private readonly clicksService: ClicksService,
@@ -55,7 +57,7 @@ export class RedirectController {
         )
         .catch(error => {
           // Log do erro mas não falha o redirecionamento
-          console.error('Erro ao registrar clique:', error);
+          this.logger.error('Erro ao registrar clique:', error);
         });
 
       // Redireciona para a URL original

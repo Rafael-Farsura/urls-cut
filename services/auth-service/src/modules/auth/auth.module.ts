@@ -18,10 +18,13 @@ import * as jwt from 'jsonwebtoken';
       inject: [ConfigService],
       useFactory: (configService: ConfigService): JwtModuleOptions => {
         const expiresIn = configService.get<string>('jwt.expiresIn') || '24h';
+        const secret = configService.get<string>('jwt.secret') || 'your-super-secret-jwt-key-change-in-production';
         return {
-          secret: configService.get<string>('jwt.secret') || 'secret',
+          secret,
           signOptions: {
             expiresIn,
+            issuer: 'urls-cut',
+            audience: 'urls-cut-api',
           } as jwt.SignOptions,
         };
       },

@@ -51,7 +51,7 @@ export class UrlsController {
       example: {
         id: '123e4567-e89b-12d3-a456-426614174000',
         originalUrl: 'https://example.com',
-        shortUrl: 'http://localhost:3000/abc123',
+        shortUrl: 'http://localhost:8080/abc123',
         shortCode: 'abc123',
         userId: 'user-id-123',
         createdAt: '2025-11-14T10:00:00.000Z',
@@ -89,7 +89,7 @@ export class UrlsController {
           {
             id: '123e4567-e89b-12d3-a456-426614174000',
             originalUrl: 'https://example.com',
-            shortUrl: 'http://localhost:3000/abc123',
+            shortUrl: 'http://localhost:8080/abc123',
             shortCode: 'abc123',
             clickCount: 5,
             createdAt: '2025-11-14T10:00:00.000Z',
@@ -138,7 +138,7 @@ export class UrlsController {
       example: {
         id: '123e4567-e89b-12d3-a456-426614174000',
         originalUrl: 'https://new-example.com',
-        shortUrl: 'http://localhost:3000/abc123',
+        shortUrl: 'http://localhost:8080/abc123',
         shortCode: 'abc123',
         updatedAt: '2025-11-14T10:00:00.000Z',
       },
