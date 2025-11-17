@@ -8,17 +8,30 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [Não Lançado]
 
 ### Added
-- Circuit Breaker Service para tolerância a falhas
-- Retry Service com exponential backoff
-- Timeout Interceptor para requisições
-- Health Service melhorado (verifica banco de dados e memória)
-- Rate Limiting com ThrottlerModule
-- GitHub Actions workflows (CI/CD e Release)
-- Configurações de resiliência no app.config.ts
+
+- Melhorias futuras planejadas
+
+## [0.7.1] - 2025-11-17
+
+### Fixed
+
+- Corrigido uso de ForbiddenException em vez de ConflictException para erros de permissão
+- Adicionada validação de usuário autenticado no UrlsController
+- Corrigidos testes unitários para usar ForbiddenException
+- Melhorados testes E2E com ValidationPipe global
+- Corrigida limpeza de banco de dados nos testes E2E
+- Adicionados delays e sequencialidade nos testes de rate limiting
+
+### Changed
+
+- Melhorado tratamento de erros de autorização (403 em vez de 409)
+- Configurado ESLint para ignorar arquivos de teste E2E
+- Removidos console.log desnecessários dos testes
 
 ## [0.7.0] - 2025-11-17
 
 ### Added
+
 - Circuit Breaker Service (CircuitBreakerService)
   - Estados: CLOSED, OPEN, HALF_OPEN
   - Threshold e timeout configuráveis
@@ -44,6 +57,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Integração com codecov para cobertura
 
 ### Changed
+
 - Health endpoint agora retorna informações detalhadas de cada componente
 - Configurações de resiliência adicionadas ao app.config.ts
 - Melhorado tratamento de erros no HttpExceptionFilter
@@ -51,6 +65,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [0.6.0] - 2025-11-16
 
 ### Added
+
 - Documentação completa do projeto
 - Arquitetura NestJS definida
 - Schema SQL do banco de dados
@@ -79,6 +94,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [0.7.0] - 2025-11-17
 
 ### Added
+
 - Circuit Breaker Service para tolerância a falhas
   - Estados: CLOSED, OPEN, HALF_OPEN
   - Threshold e timeout configuráveis
@@ -123,6 +139,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Cobertura: ~85% (Services: 92-100%, Controllers: 100%)
 
 ### Changed
+
 - JwtAuthGuard melhorado para rotas públicas
   - Popula request.user quando há token válido
   - Permite acesso público sem token
@@ -136,12 +153,14 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Retorna 503 quando componentes estão down
 
 ### Fixed
+
 - Correção de build: ThrottlerModule configurado corretamente
 - Correção de JwtAuthGuard para rotas públicas com token
 
 ## [0.6.0] - 2025-11-16
 
 ### Added
+
 - HttpExceptionFilter global para tratamento consistente de erros
   - Formatação padronizada de respostas de erro
   - Logging de erros (warn para 4xx, error para 5xx)
@@ -171,6 +190,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Total: 66 testes passando
 
 ### Changed
+
 - Melhorado tratamento de erros com HttpExceptionFilter global
 - Adicionado logging estruturado de requisições
 - Melhorada documentação da API com Swagger
@@ -178,6 +198,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [0.5.0] - 2025-11-14
 
 ### Added
+
 - Endpoint de redirecionamento GET /:shortCode
   - Redireciona para URL original (302 Found)
   - Contabiliza cliques automaticamente
@@ -200,12 +221,14 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Cobertura de testes: ~75% (59 testes passando)
 
 ### Changed
-- Melhorada estrutura de testes (organizados em __tests__/)
+
+- Melhorada estrutura de testes (organizados em **tests**/)
 - Adicionada validação de IP e User-Agent no registro de cliques
 
 ## [0.4.0] - 2025-11-14
 
 ### Added
+
 - Contabilização de cliques em URLs encurtadas
 - ClicksModule com ClicksRepository e ClicksService
 - Métodos: recordClick, getClickCount, getClicksByShortUrlId
@@ -213,12 +236,14 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Agregação de estatísticas de acesso
 
 ### Changed
+
 - Melhorada estrutura de resposta de listagem de URLs (inclui clickCount)
 - Otimizado índice de cliques por data
 
 ## [0.3.0] - 2025-11-14
 
 ### Added
+
 - Operações CRUD completas para URLs
 - Strategy Pattern para geração de código curto
   - HashBasedGenerator (SHA-256 truncado)
@@ -237,12 +262,14 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Validação de URL (protocolo HTTP/HTTPS obrigatório)
 
 ### Changed
+
 - Melhorada estrutura de resposta de listagem de URLs
 - Adicionada contagem de cliques na listagem
 
 ## [0.2.0] - 2025-11-14
 
 ### Added
+
 - Sistema de autenticação com JWT
 - Endpoints de registro e login (POST /api/auth/register, POST /api/auth/login)
 - Guard de autenticação (JwtAuthGuard) configurado como global
@@ -259,6 +286,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [0.1.0] - 2024-12-13
 
 ### Added
+
 - Estrutura base do projeto NestJS com TypeScript
 - Configuração de variáveis de ambiente (@nestjs/config)
 - Configuração TypeORM com PostgreSQL
@@ -275,7 +303,3 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Índices otimizados para queries frequentes
 
 ---
-
-[Keep a Changelog]: https://keepachangelog.com/pt-BR/1.0.0/
-[Semantic Versioning]: https://semver.org/lang/pt-BR/
-
