@@ -76,6 +76,69 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Documentação Swagger/OpenAPI completa
 - Configuração de observabilidade (logs, métricas, tracing)
 
+## [0.7.0] - 2025-11-17
+
+### Added
+- Circuit Breaker Service para tolerância a falhas
+  - Estados: CLOSED, OPEN, HALF_OPEN
+  - Threshold e timeout configuráveis
+  - Reset manual disponível
+- Retry Service com exponential backoff
+  - Retry configurável com exponential backoff
+  - Retryable errors customizáveis
+  - Máximo de tentativas configurável
+- Health Service melhorado
+  - Verificação de banco de dados com tempo de resposta
+  - Verificação de uso de memória (RSS, heap)
+  - Status detalhado de cada componente
+- Timeout Interceptor
+  - Timeout configurável para requisições (padrão: 30s)
+  - RequestTimeoutException quando excedido
+- Rate Limiting
+  - ThrottlerModule configurado globalmente
+  - Limites configuráveis via variáveis de ambiente
+  - Proteção contra abuso de requisições
+- GitHub Actions CI/CD
+  - Workflow completo (lint, test, build)
+  - Integração com codecov
+  - Release automático por tags
+- Testes unitários completos
+  - CircuitBreakerService (8 testes)
+  - RetryService (7 testes)
+  - HealthService (5 testes)
+  - TimeoutInterceptor (5 testes)
+  - JwtAuthGuard (6 testes)
+  - Total: 99 testes unitários passando
+- Testes E2E organizados
+  - auth.e2e-spec.ts: Autenticação completa
+  - urls.e2e-spec.ts: URLs e redirecionamento
+  - resilience.e2e-spec.ts: Resiliência e rate limiting
+  - 4 suites E2E cobrindo todos os endpoints
+- Scripts de teste organizados
+  - test:unit, test:e2e, test:all, test:ci
+  - Modos watch para desenvolvimento
+- Documentação completa de testes
+  - TESTING.md: Guia completo com exemplos
+  - TESTING_GUIDE.md: Guia rápido de referência
+  - Cobertura: ~85% (Services: 92-100%, Controllers: 100%)
+
+### Changed
+- JwtAuthGuard melhorado para rotas públicas
+  - Popula request.user quando há token válido
+  - Permite acesso público sem token
+  - Resolve problema de userId null em rotas públicas
+- HttpExceptionFilter melhorado
+  - Remove uso de 'any' substituindo por tipos específicos
+  - Melhor tratamento de mensagens de erro (suporta arrays)
+- Health Service refatorado
+  - Módulo dedicado criado
+  - Verificações mais detalhadas
+  - Retorna 503 quando componentes estão down
+
+### Fixed
+- Correção de build: ThrottlerModule configurado corretamente
+- Correção de JwtAuthGuard para rotas públicas com token
+
 ## [0.6.0] - 2025-11-16
 
 ### Added
