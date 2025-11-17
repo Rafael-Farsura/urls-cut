@@ -3,6 +3,7 @@ import {
   ConflictException,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -139,7 +140,7 @@ export class UrlsService {
 
     // Verifica permissão (se userId fornecido, deve ser o dono)
     if (userId && url.userId !== userId) {
-      throw new ConflictException('Você não tem permissão para atualizar esta URL');
+      throw new ForbiddenException('Você não tem permissão para atualizar esta URL');
     }
 
     return this.urlsRepository.update(id, { originalUrl });
@@ -156,7 +157,7 @@ export class UrlsService {
 
     // Verifica permissão
     if (userId && url.userId !== userId) {
-      throw new ConflictException('Você não tem permissão para deletar esta URL');
+      throw new ForbiddenException('Você não tem permissão para deletar esta URL');
     }
 
     await this.urlsRepository.softDelete(id);

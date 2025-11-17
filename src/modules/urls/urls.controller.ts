@@ -8,6 +8,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -101,6 +102,9 @@ export class UrlsController {
   })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
   async findAll(@CurrentUser() user: UserPayload) {
+    if (!user || !user.id) {
+      throw new UnauthorizedException('Usuário não autenticado');
+    }
     const urls = await this.urlsService.findByUserId(user.id);
 
     return {
@@ -148,6 +152,9 @@ export class UrlsController {
     @Body() updateUrlDto: UpdateUrlDto,
     @CurrentUser() user: UserPayload,
   ) {
+    if (!user || !user.id) {
+      throw new UnauthorizedException('Usuário não autenticado');
+    }
     const shortUrl = await this.urlsService.update(id, updateUrlDto.originalUrl, user.id);
 
     return {
@@ -174,6 +181,9 @@ export class UrlsController {
   @ApiResponse({ status: 403, description: 'Sem permissão' })
   @ApiResponse({ status: 404, description: 'URL não encontrada' })
   async delete(@Param('id') id: string, @CurrentUser() user: UserPayload) {
+    if (!user || !user.id) {
+      throw new UnauthorizedException('Usuário não autenticado');
+    }
     await this.urlsService.delete(id, user.id);
   }
 }
