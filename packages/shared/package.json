@@ -1,0 +1,21 @@
+{
+  "name": "@urls-cut/shared",
+  "version": "0.1.0",
+  "description": "Shared package - URL Shortener",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.3.0",
+    "class-validator": "^0.14.2",
+    "class-transformer": "^0.5.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
+

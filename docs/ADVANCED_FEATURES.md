@@ -97,10 +97,10 @@ services:
   api-gateway:
     image: devopsfaith/krakend:latest
     ports:
-      - "8080:8080"
+      - '8080:8080'
     volumes:
       - ./krakend/:/etc/krakend/
-    command: ["/usr/bin/krakend", "run", "-c", "/etc/krakend/krakend.json"]
+    command: ['/usr/bin/krakend', 'run', '-c', '/etc/krakend/krakend.json']
     depends_on:
       - auth-service
       - url-service
@@ -108,7 +108,7 @@ services:
   auth-service:
     build: ./services/auth
     ports:
-      - "3001:3001"
+      - '3001:3001'
     environment:
       - DB_HOST=postgres
       - JWT_SECRET=${JWT_SECRET}
@@ -116,7 +116,7 @@ services:
   url-service:
     build: ./services/url
     ports:
-      - "3002:3002"
+      - '3002:3002'
     environment:
       - DB_HOST=postgres
       - AUTH_SERVICE_URL=http://auth-service:3001
@@ -218,10 +218,7 @@ packages:
 {
   "name": "urls-cut-monorepo",
   "private": true,
-  "workspaces": [
-    "services/*",
-    "packages/*"
-  ],
+  "workspaces": ["services/*", "packages/*"],
   "scripts": {
     "dev:auth": "pnpm --filter auth-service dev",
     "dev:url": "pnpm --filter url-service dev",
@@ -251,31 +248,37 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [0.4.0] - 2024-01-15
 
 ### Added
+
 - Contabilização de cliques em URLs encurtadas
 - Endpoint para listar estatísticas de cliques
 - View `short_urls_with_stats` no banco de dados
 
 ### Changed
+
 - Melhorada performance de queries de listagem de URLs
 - Otimizado índice de cliques por data
 
 ### Fixed
+
 - Correção na contabilização de cliques simultâneos
 - Ajuste no timezone de timestamps
 
 ## [0.3.0] - 2024-01-10
 
 ### Added
+
 - Operações CRUD para URLs (listar, editar, excluir)
 - Validação de ownership em operações de modificação
 - Soft delete implementado
 
 ### Changed
+
 - Melhorada estrutura de resposta de listagem de URLs
 
 ## [0.2.0] - 2024-01-05
 
 ### Added
+
 - Sistema de autenticação com JWT
 - Endpoints de registro e login
 - Guard de autenticação
@@ -284,6 +287,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [0.1.0] - 2024-01-01
 
 ### Added
+
 - Sistema básico de encurtamento de URLs
 - Endpoint único para criar URLs (público e autenticado)
 - Geração de código curto (máximo 6 caracteres)
@@ -334,18 +338,18 @@ jobs:
         with:
           node-version: '20.11.0'
           cache: 'pnpm'
-      
+
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-      
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Run ESLint
         run: pnpm lint
-      
+
       - name: Run Prettier check
         run: pnpm format:check
 
@@ -366,22 +370,22 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-    
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: '20.11.0'
           cache: 'pnpm'
-      
+
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-      
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Run migrations
         run: pnpm migration:run
         env:
@@ -390,10 +394,10 @@ jobs:
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_NAME: url_shortener_test
-      
+
       - name: Run unit tests
         run: pnpm test:unit
-      
+
       - name: Run integration tests
         run: pnpm test:integration
         env:
@@ -402,7 +406,7 @@ jobs:
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_NAME: url_shortener_test
-      
+
       - name: Run E2E tests
         run: pnpm test:e2e
         env:
@@ -411,10 +415,10 @@ jobs:
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_NAME: url_shortener_test
-      
+
       - name: Generate coverage
         run: pnpm test:coverage
-      
+
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
@@ -430,18 +434,18 @@ jobs:
         with:
           node-version: '20.11.0'
           cache: 'pnpm'
-      
+
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-      
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Build
         run: pnpm build
-      
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -455,7 +459,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Deploy to production
         run: |
           echo "Deploy to production"
@@ -513,7 +517,7 @@ export class UrlService {
     while (attempts < maxRetries) {
       try {
         const shortCode = this.codeGenerator.generate(createUrlDto.originalUrl);
-        
+
         // Verificar colisão
         const existing = await this.urlRepository.findOne({
           where: { shortCode, deletedAt: IsNull() },
@@ -522,7 +526,9 @@ export class UrlService {
         if (existing) {
           attempts++;
           if (attempts >= maxRetries) {
-            throw new ConflictException('Não foi possível gerar código único após várias tentativas');
+            throw new ConflictException(
+              'Não foi possível gerar código único após várias tentativas',
+            );
           }
           continue;
         }
@@ -539,13 +545,13 @@ export class UrlService {
         if (error instanceof ConflictException) {
           throw error;
         }
-        
+
         attempts++;
         if (attempts >= maxRetries) {
           this.logger.error('Failed to create URL after retries', error);
           throw new InternalServerErrorException('Erro ao criar URL. Tente novamente.');
         }
-        
+
         // Exponential backoff
         await this.delay(Math.pow(2, attempts) * 100);
       }
@@ -645,7 +651,7 @@ export class TimeoutInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       timeout(this.timeout),
-      catchError((err) => {
+      catchError(err => {
         if (err instanceof TimeoutError) {
           throw new RequestTimeoutException('A requisição excedeu o tempo limite');
         }
@@ -699,19 +705,16 @@ export class HealthService {
 
     // External service check
     try {
-      await this.httpService.axiosRef.get(
-        `${process.env.AUTH_SERVICE_URL}/health`,
-        { timeout: 3000 },
-      );
+      await this.httpService.axiosRef.get(`${process.env.AUTH_SERVICE_URL}/health`, {
+        timeout: 3000,
+      });
       checks.push({ authService: { status: 'up' } });
     } catch (error) {
       checks.push({ authService: { status: 'down' } });
     }
 
     return {
-      status: checks.every(c => Object.values(c)[0].status === 'up')
-        ? 'ok'
-        : 'error',
+      status: checks.every(c => Object.values(c)[0].status === 'up') ? 'ok' : 'error',
       checks: Object.assign({}, ...checks),
     };
   }
@@ -795,4 +798,3 @@ export class FailureMonitor {
 - [GitHub Actions](https://docs.github.com/en/actions)
 - [Circuit Breaker Pattern](https://martinfowler.com/bliki/CircuitBreaker.html)
 - [Resilience Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
-

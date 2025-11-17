@@ -1,0 +1,194 @@
+{
+  "version": 3,
+  "name": "URL Shortener API Gateway",
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "port": 8080,
+  "endpoints": [
+    {
+      "endpoint": "/api/auth/register",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/auth/register",
+          "encoding": "json",
+          "sd": "static",
+          "host": ["http://auth-service:3001"]
+        }
+      ],
+      "extra_config": {
+        "qos/ratelimit/router": {
+          "max_rate": 10,
+          "capacity": 10,
+          "strategy": "ip"
+        }
+      }
+    },
+    {
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/auth/login",
+          "encoding": "json",
+          "sd": "static",
+          "host": ["http://auth-service:3001"]
+        }
+      ],
+      "extra_config": {
+        "qos/ratelimit/router": {
+          "max_rate": 20,
+          "capacity": 20,
+          "strategy": "ip"
+        }
+      }
+    },
+    {
+      "endpoint": "/api/urls",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/urls",
+          "encoding": "json",
+          "sd": "static",
+          "host": ["http://url-service:3002"]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "jwk_url": "http://auth-service:3001/.well-known/jwks.json",
+          "cache": true,
+          "cache_duration": 3600,
+          "issuer": "urls-cut",
+          "audience": ["urls-cut-api"]
+        },
+        "qos/ratelimit/router": {
+          "max_rate": 100,
+          "capacity": 100,
+          "strategy": "ip"
+        }
+      }
+    },
+    {
+      "endpoint": "/api/urls",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/urls",
+          "encoding": "json",
+          "sd": "static",
+          "host": ["http://url-service:3002"]
+        }
+      ],
+      "extra_config": {
+        "qos/ratelimit/router": {
+          "max_rate": 100,
+          "capacity": 100,
+          "strategy": "ip"
+        }
+      }
+    },
+    {
+      "endpoint": "/api/urls/{id}",
+      "method": "PUT",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/urls/{id}",
+          "encoding": "json",
+          "sd": "static",
+          "host": ["http://url-service:3002"]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "jwk_url": "http://auth-service:3001/.well-known/jwks.json",
+          "cache": true,
+          "cache_duration": 3600,
+          "issuer": "urls-cut",
+          "audience": ["urls-cut-api"]
+        },
+        "qos/ratelimit/router": {
+          "max_rate": 50,
+          "capacity": 50,
+          "strategy": "ip"
+        }
+      }
+    },
+    {
+      "endpoint": "/api/urls/{id}",
+      "method": "DELETE",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/urls/{id}",
+          "encoding": "json",
+          "sd": "static",
+          "host": ["http://url-service:3002"]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "jwk_url": "http://auth-service:3001/.well-known/jwks.json",
+          "cache": true,
+          "cache_duration": 3600,
+          "issuer": "urls-cut",
+          "audience": ["urls-cut-api"]
+        },
+        "qos/ratelimit/router": {
+          "max_rate": 50,
+          "capacity": 50,
+          "strategy": "ip"
+        }
+      }
+    },
+    {
+      "endpoint": "/{shortCode}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{shortCode}",
+          "encoding": "no-op",
+          "sd": "static",
+          "host": ["http://url-service:3002"]
+        }
+      ],
+      "extra_config": {
+        "qos/ratelimit/router": {
+          "max_rate": 1000,
+          "capacity": 1000,
+          "strategy": "ip"
+        }
+      }
+    },
+    {
+      "endpoint": "/health",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/health",
+          "encoding": "json",
+          "sd": "static",
+          "host": ["http://auth-service:3001"]
+        },
+        {
+          "url_pattern": "/health",
+          "encoding": "json",
+          "sd": "static",
+          "host": ["http://url-service:3002"]
+        }
+      ]
+    }
+  ]
+}
+

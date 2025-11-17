@@ -178,10 +178,10 @@
 - [x] ✅ Schema do banco criado via migrações
 - [x] ✅ README explicando como rodar o projeto
 - [x] ✅ Endpoints de autenticação (POST /api/auth/register, POST /api/auth/login)
-- [ ] ⏳ Endpoint para encurtar URL (Fase 6)
-- [ ] ⏳ Endpoints autenticados para gerenciar URLs (Fase 6)
-- [ ] ⏳ Endpoint de redirecionamento (Fase 8)
-- [ ] ⏳ Contabilização de cliques (Fase 7)
+- [x] ✅ Endpoint para encurtar URL (Fase 6)
+- [x] ✅ Endpoints autenticados para gerenciar URLs (Fase 6)
+- [x] ✅ Endpoint de redirecionamento (Fase 8)
+- [x] ✅ Contabilização de cliques (Fase 7)
 
 **Requisitos com Diferencial:**
 
@@ -253,23 +253,23 @@
 
 #### Fase 4: Módulo de Autenticação (Próxima - 4 commits)
 
-- [ ] Criar módulo Auth (AuthModule, JwtStrategy)
-- [ ] Implementar AuthService (bcrypt, JWT, hashPassword, verifyPassword, generateToken)
-- [ ] Criar DTOs de autenticação (RegisterDto, LoginDto com class-validator)
-- [ ] Implementar AuthController (POST /api/auth/register, POST /api/auth/login)
+- [x] ✅ Criar módulo Auth (AuthModule, JwtStrategy)
+- [x] ✅ Implementar AuthService (bcrypt, JWT, hashPassword, verifyPassword, generateToken)
+- [x] ✅ Criar DTOs de autenticação (RegisterDto, LoginDto com class-validator)
+- [x] ✅ Implementar AuthController (POST /api/auth/register, POST /api/auth/login)
 
 #### Fase 5: Guards e Decorators (3 commits)
 
-- [ ] Criar JwtAuthGuard
-- [ ] Criar decorators (@CurrentUser, @Public)
-- [ ] Configurar guard global
+- [x] ✅ Criar JwtAuthGuard
+- [x] ✅ Criar decorators (@CurrentUser, @Public)
+- [x] ✅ Configurar guard global
 
 #### Fase 6: Módulo de URLs (5 commits)
 
-- [ ] Estratégia de geração de código curto
-- [ ] Módulo Urls (Repository, Service)
-- [ ] DTOs de URL
-- [ ] UrlsController (CRUD completo)
+- [x] ✅ Estratégia de geração de código curto
+- [x] ✅ Módulo Urls (Repository, Service)
+- [x] ✅ DTOs de URL
+- [x] ✅ UrlsController (CRUD completo)
 
 ### Conclusão
 

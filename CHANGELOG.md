@@ -9,7 +9,22 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### Added
 
-- Melhorias futuras planejadas
+- Estrutura de monorepo com serviços separados
+  - Auth Service (porta 3001)
+  - URL Service (porta 3002)
+  - Pacote shared para código compartilhado
+- API Gateway KrakenD configurado
+  - Roteamento para serviços
+  - Validação de JWT
+  - Rate limiting por endpoint
+  - Porta 8080
+- Docker Compose para monorepo (docker-compose.monorepo.yml)
+- Documentação de migração (MONOREPO_MIGRATION.md, README_MONOREPO.md)
+
+### Changed
+
+- Estrutura do projeto preparada para monorepo
+- Configuração KrakenD adicionada em gateway/krakend/krakend.json
 
 ## [0.7.1] - 2025-11-17
 
