@@ -5,15 +5,16 @@ Este documento lista todas as tags de versão criadas no projeto, seguindo [Sema
 ## Versões Disponíveis
 
 ### v0.7.1 - 2025-11-17
-**Commit:** `2a2e3ad`  
+**Commit:** `f37cc0e`  
 **Descrição:** Correções de testes e melhorias  
 **Principais mudanças:**
 - Correção de exceções de permissão (ForbiddenException)
 - Melhorias nos testes E2E
 - Configuração do ESLint
+- Documentação completa de testes
 
 ### v0.7.0 - 2025-11-17
-**Commit:** `d32072d`  
+**Commit:** `54a4919`  
 **Descrição:** Resiliência e CI/CD  
 **Principais mudanças:**
 - Circuit Breaker Service
@@ -21,9 +22,10 @@ Este documento lista todas as tags de versão criadas no projeto, seguindo [Sema
 - Timeout Interceptor
 - Rate Limiting
 - GitHub Actions workflows
+- Health checks melhorados
 
 ### v0.6.0 - 2025-11-16
-**Commit:** `0680f60`  
+**Commit:** `417925e`  
 **Descrição:** Observabilidade e Swagger  
 **Principais mudanças:**
 - HttpExceptionFilter e LoggingInterceptor
@@ -32,16 +34,16 @@ Este documento lista todas as tags de versão criadas no projeto, seguindo [Sema
 - Configuração de observabilidade
 
 ### v0.5.0 - 2025-11-14
-**Commit:** `30fc1f3`  
+**Commit:** `d360588`  
 **Descrição:** Redirecionamento e testes completos  
 **Principais mudanças:**
 - Endpoint de redirecionamento GET /:shortCode
-- Testes unitários completos (66 testes)
+- Testes unitários completos (99 testes)
 - Testes E2E para todas as rotas
-- Cobertura de testes: ~75%
+- Cobertura de testes: ~85%
 
 ### v0.4.0 - 2025-11-14
-**Commit:** `7239f1b`  
+**Commit:** `3a80cb7`  
 **Descrição:** Contabilização de acessos  
 **Principais mudanças:**
 - ClicksModule com ClicksRepository e ClicksService
@@ -49,7 +51,7 @@ Este documento lista todas as tags de versão criadas no projeto, seguindo [Sema
 - Integração de contagem na listagem de URLs
 
 ### v0.3.0 - 2025-11-14
-**Commit:** `00c0e47`  
+**Commit:** `47cfc4b`  
 **Descrição:** Operações CRUD de URLs  
 **Principais mudanças:**
 - Strategy Pattern para geração de código curto
@@ -58,7 +60,7 @@ Este documento lista todas as tags de versão criadas no projeto, seguindo [Sema
 - Soft delete implementado
 
 ### v0.2.0 - 2025-11-14
-**Commit:** `fb4aebf`  
+**Commit:** `22fa75b`  
 **Descrição:** Sistema de autenticação com JWT  
 **Principais mudanças:**
 - Endpoints de registro e login
@@ -66,8 +68,8 @@ Este documento lista todas as tags de versão criadas no projeto, seguindo [Sema
 - Decorators @CurrentUser() e @Public()
 - Validação de senha com bcrypt
 
-### v0.1.0 - 2024-12-13
-**Commit:** `1988a16`  
+### v0.1.0 - 2025-11-14
+**Commit:** `a92171f`  
 **Descrição:** Setup inicial e estrutura base  
 **Principais mudanças:**
 - Estrutura base do projeto NestJS
@@ -75,6 +77,7 @@ Este documento lista todas as tags de versão criadas no projeto, seguindo [Sema
 - Entidades: User, ShortUrl, Click
 - Módulo de Usuários
 - Soft delete implementado
+- Docker e Docker Compose configurados
 
 ## Como Usar as Tags
 
