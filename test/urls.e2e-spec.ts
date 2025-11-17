@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
@@ -17,6 +17,13 @@ describe('URLs (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     dataSource = moduleFixture.get<DataSource>(DataSource);
     await app.init();
 
@@ -47,15 +54,16 @@ describe('URLs (e2e)', () => {
 
   describe('POST /api/urls', () => {
     it('deve criar URL sem autenticação (público)', () => {
+      const uniqueUrl = `https://example.com?t=${Date.now()}`;
       return request(app.getHttpServer())
         .post('/api/urls')
         .send({
-          originalUrl: 'https://example.com',
+          originalUrl: uniqueUrl,
         })
         .expect(201)
         .expect(res => {
           expect(res.body).toHaveProperty('id');
-          expect(res.body).toHaveProperty('originalUrl');
+          expect(res.body).toHaveProperty('originalUrl', uniqueUrl);
           expect(res.body).toHaveProperty('shortUrl');
           expect(res.body).toHaveProperty('shortCode');
           expect(res.body.userId).toBeNull();
@@ -63,11 +71,12 @@ describe('URLs (e2e)', () => {
     });
 
     it('deve criar URL com autenticação e associar ao usuário', () => {
+      const uniqueUrl = `https://example.com/authenticated?t=${Date.now()}`;
       return request(app.getHttpServer())
         .post('/api/urls')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          originalUrl: 'https://example.com/authenticated',
+          originalUrl: uniqueUrl,
         })
         .expect(201)
         .expect(res => {
@@ -118,18 +127,17 @@ describe('URLs (e2e)', () => {
 
   describe('PUT /api/urls/:id', () => {
     it('deve atualizar URL do usuário', async () => {
-      if (!urlId) {
-        const createRes = await request(app.getHttpServer())
-          .post('/api/urls')
-          .set('Authorization', `Bearer ${authToken}`)
-          .send({
-            originalUrl: 'https://example.com/to-update',
-          });
-        urlId = createRes.body.id;
-      }
+      // Criar URL específica para atualizar
+      const createRes = await request(app.getHttpServer())
+        .post('/api/urls')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          originalUrl: `https://example.com/to-update?t=${Date.now()}`,
+        });
+      const updateUrlId = createRes.body.id;
 
       return request(app.getHttpServer())
-        .put(`/api/urls/${urlId}`)
+        .put(`/api/urls/${updateUrlId}`)
         .set('Authorization', `Bearer ${authToken}`)
         .send({
           originalUrl: 'https://example.com/updated',
@@ -141,6 +149,15 @@ describe('URLs (e2e)', () => {
     });
 
     it('deve retornar 403 para URL de outro usuário', async () => {
+      // Criar URL do primeiro usuário
+      const createRes = await request(app.getHttpServer())
+        .post('/api/urls')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          originalUrl: `https://example.com/to-protect?t=${Date.now()}`,
+        });
+      const protectedUrlId = createRes.body.id;
+
       // Criar outro usuário
       const email2 = `test-${Date.now()}@example.com`;
       await request(app.getHttpServer())
@@ -161,7 +178,7 @@ describe('URLs (e2e)', () => {
 
       // Tentar atualizar URL do primeiro usuário
       return request(app.getHttpServer())
-        .put(`/api/urls/${urlId}`)
+        .put(`/api/urls/${protectedUrlId}`)
         .set('Authorization', `Bearer ${token2}`)
         .send({
           originalUrl: 'https://example.com/hacked',
@@ -172,11 +189,12 @@ describe('URLs (e2e)', () => {
 
   describe('DELETE /api/urls/:id', () => {
     it('deve deletar URL do usuário', async () => {
+      const uniqueUrl = `https://example.com/to-delete?t=${Date.now()}`;
       const createRes = await request(app.getHttpServer())
         .post('/api/urls')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          originalUrl: 'https://example.com/to-delete',
+          originalUrl: uniqueUrl,
         });
 
       const deleteId = createRes.body.id;
@@ -190,18 +208,21 @@ describe('URLs (e2e)', () => {
 
   describe('GET /:shortCode', () => {
     it('deve redirecionar para URL original', async () => {
+      const uniqueUrl = `https://example.com/redirect-test?t=${Date.now()}`;
       const createRes = await request(app.getHttpServer())
         .post('/api/urls')
         .send({
-          originalUrl: 'https://example.com/redirect-test',
+          originalUrl: uniqueUrl,
         });
 
       const shortCode = createRes.body.shortCode;
+      expect(shortCode).toBeDefined();
+      expect(shortCode.length).toBe(6);
 
       return request(app.getHttpServer())
         .get(`/${shortCode}`)
         .expect(302)
-        .expect('Location', 'https://example.com/redirect-test');
+        .expect('Location', uniqueUrl);
     });
 
     it('deve retornar 404 para código inexistente', () => {
@@ -209,18 +230,25 @@ describe('URLs (e2e)', () => {
     });
 
     it('deve contabilizar clique ao redirecionar', async () => {
+      const uniqueUrl = `https://example.com/click-test?t=${Date.now()}`;
       const createRes = await request(app.getHttpServer())
         .post('/api/urls')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          originalUrl: 'https://example.com/click-test',
+          originalUrl: uniqueUrl,
         });
 
       const shortCode = createRes.body.shortCode;
       const urlId = createRes.body.id;
 
+      expect(shortCode).toBeDefined();
+      expect(urlId).toBeDefined();
+
       // Fazer redirecionamento
       await request(app.getHttpServer()).get(`/${shortCode}`).expect(302);
+
+      // Aguardar um pouco para o clique ser registrado
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Verificar se clique foi contabilizado
       const listRes = await request(app.getHttpServer())
@@ -229,6 +257,7 @@ describe('URLs (e2e)', () => {
         .expect(200);
 
       const url = listRes.body.urls.find((u: any) => u.id === urlId);
+      expect(url).toBeDefined();
       expect(url.clickCount).toBeGreaterThanOrEqual(1);
     });
   });

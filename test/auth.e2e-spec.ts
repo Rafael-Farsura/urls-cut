@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
@@ -16,6 +16,13 @@ describe('Auth (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     dataSource = moduleFixture.get<DataSource>(DataSource);
     await app.init();
   });
@@ -72,10 +79,11 @@ describe('Auth (e2e)', () => {
     });
 
     it('deve validar tamanho mínimo de senha', () => {
+      const uniqueEmail = `test-${Date.now()}@example.com`;
       return request(app.getHttpServer())
         .post('/api/auth/register')
         .send({
-          email: 'test@example.com',
+          email: uniqueEmail,
           password: 'short',
         })
         .expect(400);
