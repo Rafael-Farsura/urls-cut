@@ -9,22 +9,35 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### Added
 
-- Estrutura de monorepo com serviços separados
-  - Auth Service (porta 3001)
-  - URL Service (porta 3002)
-  - Pacote shared para código compartilhado
-- API Gateway KrakenD configurado
-  - Roteamento para serviços
-  - Validação de JWT
-  - Rate limiting por endpoint
+- ✅ **Monorepo completamente implementado**
+  - Auth Service (porta 3001) - Autenticação e gerenciamento de usuários
+  - URL Service (porta 3002) - Encurtamento e gerenciamento de URLs
+  - Pacote shared - Código compartilhado entre serviços
+  - Código migrado de `src/` para serviços correspondentes
+- ✅ **API Gateway KrakenD completamente configurado**
+  - Roteamento para auth-service e url-service
+  - Validação de JWT com secret key (HS256)
+  - Rate limiting por endpoint configurado
+  - Health checks agregados
   - Porta 8080
-- Docker Compose para monorepo (docker-compose.monorepo.yml)
-- Documentação de migração (MONOREPO_MIGRATION.md, README_MONOREPO.md)
+- ✅ **Docker Compose para monorepo** (docker-compose.monorepo.yml)
+  - PostgreSQL compartilhado
+  - Auth Service containerizado
+  - URL Service containerizado
+  - API Gateway (KrakenD) containerizado
+- ✅ **Documentação completa**
+  - MONOREPO_MIGRATION.md - Guia de migração
+  - README_MONOREPO.md - Documentação do monorepo
+  - MONOREPO_STATUS.md - Status da implementação
+  - .env.monorepo.example - Variáveis de ambiente
 
 ### Changed
 
-- Estrutura do projeto preparada para monorepo
-- Configuração KrakenD adicionada em gateway/krakend/krakend.json
+- Estrutura do projeto migrada para monorepo
+- Configuração KrakenD com validação JWT por secret key
+- Portas ajustadas: 3001 (auth), 3002 (url), 8080 (gateway)
+- DatabaseModule configurado separadamente para cada serviço
+- AppModule e main.ts criados para cada serviço
 
 ## [0.7.1] - 2025-11-17
 

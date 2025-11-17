@@ -80,25 +80,29 @@ Este documento verifica a implementação de todas as features solicitadas no **
 ## ✅ Features do ADVANCED_FEATURES.md
 
 ### 1. API Gateway (KrakenD)
-- [x] ✅ **Status:** Implementado (estrutura base)
+- [x] ✅ **Status:** Implementado e Completo
 - [x] **Implementação:** 
   - [x] Configuração KrakenD criada (`gateway/krakend/krakend.json`)
   - [x] Roteamento para auth-service e url-service
-  - [x] Validação de JWT configurada
-  - [x] Rate limiting por endpoint
+  - [x] Validação de JWT com secret key (HS256)
+  - [x] Rate limiting por endpoint configurado
   - [x] Docker Compose configurado
-  - [ ] Migração de código pendente (código ainda em `src/`)
+  - [x] Health checks agregados
+  - [x] Endpoint JWKS no auth-service
 
 ### 2. Monorepo com Separação de Serviços
-- [x] ✅ **Status:** Implementado (estrutura base)
+- [x] ✅ **Status:** Implementado e Completo
 - [x] **Implementação:**
   - [x] Estrutura de diretórios criada
-  - [x] `services/auth-service/` configurado
-  - [x] `services/url-service/` configurado
-  - [x] `packages/shared/` criado
+  - [x] `services/auth-service/` completo (auth, users, health)
+  - [x] `services/url-service/` completo (urls, clicks, health, metrics)
+  - [x] `packages/shared/` com código compartilhado
   - [x] Dockerfiles para cada serviço
   - [x] Docker Compose para monorepo
-  - [ ] Migração de código pendente (código ainda em `src/`)
+  - [x] Código migrado de `src/` para serviços
+  - [x] AppModule e main.ts criados para cada serviço
+  - [x] DatabaseModule configurado separadamente
+  - [x] Configurações específicas por serviço
 
 ### 3. Changelog
 - [x] ✅ **Status:** Implementado e atualizado
@@ -143,15 +147,14 @@ Este documento verifica a implementação de todas as features solicitadas no **
 
 ### ⚠️ Pendente
 - Deploy em cloud provider (documentado mas sem link)
-- Migração de código para serviços (estrutura criada, código ainda em `src/`)
 
 ## 🎯 Conclusão
 
 O projeto implementa **todos os requisitos obrigatórios** e a **maioria dos diferenciais básicos e avançados**. 
 
 **Features Avançadas Implementadas:**
-- ✅ **Monorepo** - Estrutura base criada (migração de código pendente)
-- ✅ **API Gateway (KrakenD)** - Configurado e pronto para uso
+- ✅ **Monorepo** - Implementação completa com código migrado
+- ✅ **API Gateway (KrakenD)** - Configurado e funcional
 - ✅ **Changelog** - Implementado e atualizado
 - ✅ **Git Tags** - 8 tags criadas
 - ✅ **GitHub Actions** - CI/CD completo

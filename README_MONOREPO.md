@@ -44,9 +44,9 @@ docker-compose -f docker-compose.monorepo.yml down
 
 ### Acessar Serviços
 
-- **API Gateway**: http://localhost:8080
-- **Auth Service**: http://localhost:3001
-- **URL Service**: http://localhost:3002
+- **API Gateway**: <http://localhost:8080>
+- **Auth Service**: <http://localhost:3001>
+- **URL Service**: <http://localhost:3002>
 - **PostgreSQL**: localhost:5432
 
 ## 📁 Estrutura
@@ -91,9 +91,9 @@ O API Gateway valida JWT automaticamente para endpoints protegidos. Para endpoin
 
 ## 📊 Health Checks
 
-- **API Gateway**: http://localhost:8080/health
-- **Auth Service**: http://localhost:3001/health
-- **URL Service**: http://localhost:3002/health
+- **API Gateway**: <http://localhost:8080/health>
+- **Auth Service**: <http://localhost:3001/health>
+- **URL Service**: <http://localhost:3002/health>
 
 ## 🔄 Migração do Código
 
@@ -146,4 +146,3 @@ npm test
 ## ⚠️ Nota
 
 Esta é uma implementação inicial do monorepo. O código ainda precisa ser migrado dos diretórios `src/` para os serviços correspondentes.
-

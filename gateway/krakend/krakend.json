@@ -61,7 +61,7 @@
       "extra_config": {
         "auth/validator": {
           "alg": "HS256",
-          "jwk_url": "http://auth-service:3001/.well-known/jwks.json",
+          "secret": "${JWT_SECRET}",
           "cache": true,
           "cache_duration": 3600,
           "issuer": "urls-cut",
@@ -109,7 +109,7 @@
       "extra_config": {
         "auth/validator": {
           "alg": "HS256",
-          "jwk_url": "http://auth-service:3001/.well-known/jwks.json",
+          "secret": "${JWT_SECRET}",
           "cache": true,
           "cache_duration": 3600,
           "issuer": "urls-cut",
@@ -137,7 +137,7 @@
       "extra_config": {
         "auth/validator": {
           "alg": "HS256",
-          "jwk_url": "http://auth-service:3001/.well-known/jwks.json",
+          "secret": "${JWT_SECRET}",
           "cache": true,
           "cache_duration": 3600,
           "issuer": "urls-cut",

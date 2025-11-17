@@ -5,13 +5,15 @@ WORKDIR /app
 # Dependencies stage
 FROM base AS dependencies
 COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --only=production && npm cache clean --force
 
 # Build stage
 FROM base AS build
 COPY package*.json ./
-RUN npm ci
-COPY . .
+RUN npm install
+COPY tsconfig.json nest-cli.json ./
+COPY src ./src
+RUN rm -rf node_modules/.cache tsconfig.tsbuildinfo 2>/dev/null || true
 RUN npm run build
 
 # Production stage

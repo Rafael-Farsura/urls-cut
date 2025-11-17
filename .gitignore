@@ -47,3 +47,7 @@ lerna-debug.log*
 *.swo
 *~
 
+
+# Build artifacts
+services/*/dist/
+services/*/node_modules/
