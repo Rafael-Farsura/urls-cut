@@ -13,4 +13,15 @@ export default registerAs('app', () => ({
   apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:3000',
   shortCodeLength: parseNumber(process.env.SHORT_CODE_LENGTH, 6),
   shortCodeStrategy: process.env.SHORT_CODE_STRATEGY || 'hash',
+  // Resiliência
+  circuitBreakerThreshold: parseNumber(process.env.CIRCUIT_BREAKER_THRESHOLD, 5),
+  circuitBreakerTimeout: parseNumber(process.env.CIRCUIT_BREAKER_TIMEOUT, 60000),
+  retryMaxAttempts: parseNumber(process.env.RETRY_MAX_ATTEMPTS, 3),
+  retryInitialDelay: parseNumber(process.env.RETRY_INITIAL_DELAY, 100),
+  retryMaxDelay: parseNumber(process.env.RETRY_MAX_DELAY, 5000),
+  retryFactor: parseNumber(process.env.RETRY_FACTOR, 2),
+  requestTimeout: parseNumber(process.env.REQUEST_TIMEOUT, 30000),
+  // Rate Limiting
+  throttleTtl: parseNumber(process.env.THROTTLE_TTL, 60), // segundos (convertido para ms internamente)
+  throttleLimit: parseNumber(process.env.THROTTLE_LIMIT, 100), // requisições por TTL
 }));
