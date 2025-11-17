@@ -8,6 +8,49 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [Não Lançado]
 
 ### Added
+- Circuit Breaker Service para tolerância a falhas
+- Retry Service com exponential backoff
+- Timeout Interceptor para requisições
+- Health Service melhorado (verifica banco de dados e memória)
+- Rate Limiting com ThrottlerModule
+- GitHub Actions workflows (CI/CD e Release)
+- Configurações de resiliência no app.config.ts
+
+## [0.7.0] - 2025-11-17
+
+### Added
+- Circuit Breaker Service (CircuitBreakerService)
+  - Estados: CLOSED, OPEN, HALF_OPEN
+  - Threshold e timeout configuráveis
+  - Reset manual disponível
+- Retry Service (RetryService)
+  - Exponential backoff configurável
+  - Retryable errors customizáveis
+  - Máximo de tentativas configurável
+- Timeout Interceptor
+  - Timeout configurável por requisição
+  - RequestTimeoutException quando excedido
+- Health Service melhorado
+  - Verificação de banco de dados com tempo de resposta
+  - Verificação de uso de memória
+  - Status detalhado de cada componente
+- Rate Limiting
+  - ThrottlerModule configurado globalmente
+  - Limites configuráveis via variáveis de ambiente
+  - Proteção contra abuso de requisições
+- GitHub Actions
+  - Workflow de CI/CD completo (lint, test, build)
+  - Workflow de release automático
+  - Integração com codecov para cobertura
+
+### Changed
+- Health endpoint agora retorna informações detalhadas de cada componente
+- Configurações de resiliência adicionadas ao app.config.ts
+- Melhorado tratamento de erros no HttpExceptionFilter
+
+## [0.6.0] - 2025-11-16
+
+### Added
 - Documentação completa do projeto
 - Arquitetura NestJS definida
 - Schema SQL do banco de dados

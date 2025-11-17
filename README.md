@@ -21,7 +21,8 @@ Sistema de encurtamento de URLs construído com Node.js, seguindo os princípios
 
 Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 
-**Implementado (v0.6.0):**
+**Implementado (v0.7.0):**
+
 - ✅ Estrutura base do projeto NestJS
 - ✅ Configuração Docker e Docker Compose (dev e prod)
 - ✅ Banco de dados PostgreSQL com TypeORM
@@ -36,7 +37,7 @@ Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 - ✅ HttpExceptionFilter global para tratamento de erros
 - ✅ Soft delete (exclusão lógica)
 - ✅ Auditoria (created_at, updated_at)
-- ✅ Health check endpoint (/health)
+- ✅ Health check endpoint (/health) com verificação de DB e memória
 - ✅ Encurtamento de URLs (máximo 6 caracteres)
 - ✅ URLs podem ser criadas por usuários autenticados ou anônimos
 - ✅ Usuários autenticados podem gerenciar suas URLs (CRUD completo)
@@ -48,6 +49,11 @@ Sistema REST API para encurtamento de URLs com as seguintes funcionalidades:
 - ✅ Testes unitários completos (66 testes, ~80% cobertura)
 - ✅ Testes E2E para todas as rotas
 - ✅ Coleção Postman completa
+- ✅ **Circuit Breaker** para tolerância a falhas
+- ✅ **Retry Service** com exponential backoff
+- ✅ **Timeout Interceptor** para requisições
+- ✅ **Rate Limiting** com ThrottlerModule
+- ✅ **GitHub Actions** workflows (CI/CD e Release)
 
 ## 🛠 Tecnologias
 
@@ -197,11 +203,25 @@ ENABLE_TRACING=false
 # SENTRY_DSN=
 # DATADOG_API_KEY=
 # ELASTIC_APM_SERVER_URL=
+
+# Resilience (Opcional)
+# CIRCUIT_BREAKER_THRESHOLD=5
+# CIRCUIT_BREAKER_TIMEOUT=60000
+# RETRY_MAX_ATTEMPTS=3
+# RETRY_INITIAL_DELAY=100
+# RETRY_MAX_DELAY=5000
+# RETRY_FACTOR=2
+# REQUEST_TIMEOUT=30000
+
+# Rate Limiting (Opcional)
+# THROTTLE_TTL=60
+# THROTTLE_LIMIT=100
 ```
 
 ### O que deve ser variável de ambiente?
 
 **Obrigatórias:**
+
 - `NODE_ENV`: Ambiente de execução
 - `PORT`: Porta do servidor
 - `DB_*`: Configurações do banco de dados
@@ -209,25 +229,46 @@ ENABLE_TRACING=false
 - `API_BASE_URL`: URL base da API
 
 **Opcionais mas Recomendadas:**
+
 - `JWT_EXPIRES_IN`: Tempo de expiração do token
 - `SHORT_CODE_LENGTH`: Tamanho do código curto
 - `SHORT_CODE_STRATEGY`: Estratégia de geração
 
 **Opcionais (Observabilidade):**
+
 - `ENABLE_LOGGING`, `ENABLE_METRICS`, `ENABLE_TRACING`: Ativam/desativam recursos de observabilidade
 - Credenciais de serviços externos (Sentry, Datadog, Elastic APM, Prometheus, etc.)
+
+**Opcionais (Resiliência):**
+
+- `CIRCUIT_BREAKER_THRESHOLD`: Número de falhas antes de abrir o circuit (padrão: 5)
+- `CIRCUIT_BREAKER_TIMEOUT`: Tempo em ms antes de tentar recuperação (padrão: 60000)
+- `RETRY_MAX_ATTEMPTS`: Máximo de tentativas de retry (padrão: 3)
+- `RETRY_INITIAL_DELAY`: Delay inicial em ms para retry (padrão: 100)
+- `RETRY_MAX_DELAY`: Delay máximo em ms para retry (padrão: 5000)
+- `RETRY_FACTOR`: Fator de multiplicação para exponential backoff (padrão: 2)
+- `REQUEST_TIMEOUT`: Timeout em ms para requisições (padrão: 30000)
+
+**Opcionais (Rate Limiting):**
+
+- `THROTTLE_TTL`: Janela de tempo em segundos (padrão: 60)
+- `THROTTLE_LIMIT`: Número máximo de requisições por janela (padrão: 100)
 
 ### Configuração de Observabilidade
 
 #### Logs
+
 Para habilitar logging estruturado:
+
 ```env
 ENABLE_LOGGING=true
 LOG_LEVEL=info  # error, warn, info, debug
 ```
 
 #### Métricas
+
 Para habilitar métricas (Prometheus):
+
 ```env
 ENABLE_METRICS=true
 PROMETHEUS_ENABLED=true
@@ -235,7 +276,9 @@ PROMETHEUS_PORT=9090
 ```
 
 #### Rastreamento (Tracing)
+
 Para habilitar tracing com OpenTelemetry/Jaeger:
+
 ```env
 ENABLE_TRACING=true
 ELASTIC_APM_SERVER_URL=http://localhost:8200
@@ -247,12 +290,14 @@ JAEGER_AGENT_PORT=6831
 #### Serviços Externos
 
 **Sentry (Error Tracking):**
+
 ```env
 SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
 SENTRY_ENABLED=true
 ```
 
 **Datadog (APM):**
+
 ```env
 DATADOG_API_KEY=your-api-key
 DATADOG_ENABLED=true
@@ -260,6 +305,7 @@ DATADOG_SERVICE=url-shortener
 ```
 
 **Elastic APM:**
+
 ```env
 ELASTIC_APM_SERVER_URL=http://localhost:8200
 ELASTIC_APM_ENABLED=true
@@ -302,6 +348,7 @@ A documentação completa da API está disponível via Swagger/OpenAPI:
 - **URL Produção**: [Link será adicionado após deploy]
 
 A documentação Swagger inclui:
+
 - ✅ Descrição de todos os endpoints
 - ✅ Schemas de requisição e resposta
 - ✅ Exemplos de uso
@@ -314,6 +361,7 @@ A documentação Swagger inclui:
 ### Endpoints Principais
 
 #### Autenticação
+
 - `POST /api/auth/register` - Registrar novo usuário
   - Body: `{ "email": "user@example.com", "password": "password123" }`
   - Retorna: `{ "access_token": "jwt_token", "user": { "id": "...", "email": "..." } }`
@@ -322,6 +370,7 @@ A documentação Swagger inclui:
   - Retorna: `{ "access_token": "jwt_token", "user": { "id": "...", "email": "..." } }`
 
 #### URLs
+
 - `POST /api/urls` - Criar URL encurtado (público ou autenticado)
   - Body: `{ "originalUrl": "https://example.com" }`
   - Retorna: `{ "id": "...", "originalUrl": "...", "shortUrl": "...", "shortCode": "...", "userId": "..." | null }`
@@ -332,6 +381,7 @@ A documentação Swagger inclui:
 - `DELETE /api/urls/:id` - Deletar URL (autenticado, requer ownership)
 
 #### Redirecionamento
+
 - `GET /:shortCode` - Redirecionar para URL original
 
 ## 🧪 Testes
@@ -364,6 +414,7 @@ npm run test:coverage
 ### Cobertura Mínima
 
 O projeto visa manter cobertura de testes acima de 80% para:
+
 - Services
 - Controllers
 - Repositories
@@ -378,6 +429,7 @@ Modules → Controllers → Services → Repositories → Database
 ```
 
 Cada módulo encapsula:
+
 - **Controllers**: Handlers HTTP com decorators
 - **Services**: Lógica de negócio
 - **Repositories**: Acesso a dados (TypeORM)
@@ -402,6 +454,7 @@ Cada módulo encapsula:
 - **Dependency Injection**: Inversão de controle
 
 Para mais detalhes, consulte:
+
 - [Arquitetura](./docs/ARCHITECTURE.md)
 - [Design Patterns](./docs/DESIGN_PATTERNS.md)
 - [Diagramas](./docs/DIAGRAMS.md)
@@ -483,6 +536,7 @@ O sistema está disponível em produção:
 Todas as mudanças do projeto são documentadas no [CHANGELOG.md](./CHANGELOG.md).
 
 O projeto segue versionamento semântico:
+
 - **0.1.0**: Encurtador criado
 - **0.2.0**: Autenticação
 - **0.3.0**: Operações de usuário no encurtador
@@ -493,6 +547,7 @@ O projeto segue versionamento semântico:
 O roadmap completo de implementação, organizado por commits, está disponível em [commits.md](./commits.md).
 
 O roadmap inclui:
+
 - ✅ Ordem de implementação das funcionalidades
 - ✅ Título e descrição de cada commit
 - ✅ Arquivos modificados em cada etapa
@@ -506,4 +561,3 @@ Este projeto é um teste técnico.
 ## 👤 Autor
 
 Desenvolvido seguindo as especificações do teste técnico.
-

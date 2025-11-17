@@ -38,9 +38,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
         error = exception.constructor.name;
-      } else if (typeof exceptionResponse === 'object') {
-        message = (exceptionResponse as any).message || exception.message || 'Erro na requisição';
-        error = (exceptionResponse as any).error || exception.constructor.name;
+      } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+        const responseObj = exceptionResponse as { message?: string | string[]; error?: string };
+        message =
+          (Array.isArray(responseObj.message)
+            ? responseObj.message.join(', ')
+            : responseObj.message) ||
+          exception.message ||
+          'Erro na requisição';
+        error = responseObj.error || exception.constructor.name;
       }
     } else if (exception instanceof Error) {
       message = exception.message;
