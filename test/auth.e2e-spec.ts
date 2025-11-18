@@ -93,12 +93,10 @@ describe('Auth (e2e)', () => {
   describe('POST /api/auth/login', () => {
     it('deve fazer login e retornar token', async () => {
       const email = `test-${Date.now()}@example.com`;
-      await request(app.getHttpServer())
-        .post('/api/auth/register')
-        .send({
-          email,
-          password: 'password123',
-        });
+      await request(app.getHttpServer()).post('/api/auth/register').send({
+        email,
+        password: 'password123',
+      });
 
       return request(app.getHttpServer())
         .post('/api/auth/login')
@@ -125,5 +123,3 @@ describe('Auth (e2e)', () => {
     });
   });
 });
-
-

@@ -1,6 +1,6 @@
 /**
  * Shared Package - URL Shortener
- * 
+ *
  * Este pacote contém código compartilhado entre os serviços
  */
 
@@ -33,4 +33,3 @@ export interface UserPayload {
   id: string;
   email: string;
 }
-

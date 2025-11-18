@@ -12,9 +12,13 @@ export default registerAs('jwt', () => {
   }
 
   // Em desenvolvimento, usa fallback seguro apenas se não estiver definido
-  const secret = jwtSecret || (nodeEnv === 'production' 
-    ? (() => { throw new Error('JWT_SECRET must be set in production'); })() 
-    : 'dev-secret-key-change-in-production-DO-NOT-USE-IN-PRODUCTION');
+  const secret =
+    jwtSecret ||
+    (nodeEnv === 'production'
+      ? (() => {
+          throw new Error('JWT_SECRET must be set in production');
+        })()
+      : 'dev-secret-key-change-in-production-DO-NOT-USE-IN-PRODUCTION');
 
   return {
     secret,

@@ -23,7 +23,7 @@ export class JwksController {
     // Para JWT com HS256, o gateway precisa da chave secreta
     // Em produção, considere usar RS256 com chaves públicas/privadas
     const secret = this.configService.get<string>('jwt.secret');
-    
+
     if (!secret) {
       throw new Error('JWT_SECRET is not configured');
     }
@@ -43,4 +43,3 @@ export class JwksController {
     };
   }
 }
-

@@ -68,7 +68,7 @@ describe('Resilience Features (e2e)', () => {
     it('deve permitir requisições dentro do limite', async () => {
       // Aguardar 2 segundos para garantir que o rate limit foi resetado
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Faz requisições sequencialmente para evitar ECONNRESET
       const responses = [];
       for (let i = 0; i < 10; i++) {
@@ -93,7 +93,7 @@ describe('Resilience Features (e2e)', () => {
     it('deve retornar 429 quando exceder rate limit', async () => {
       // Aguardar 2 segundos para garantir que o rate limit foi resetado
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Faz requisições sequencialmente para evitar ECONNRESET
       let rateLimitedCount = 0;
       let successCount = 0;
@@ -123,7 +123,7 @@ describe('Resilience Features (e2e)', () => {
     it('deve completar requisições normais dentro do timeout', async () => {
       // Aguardar 2 segundos para garantir que o rate limit foi resetado
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       return request(app.getHttpServer())
         .get('/health')
         .expect(res => {
@@ -134,5 +134,3 @@ describe('Resilience Features (e2e)', () => {
     }, 15000);
   });
 });
-
-

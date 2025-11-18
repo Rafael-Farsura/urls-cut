@@ -19,7 +19,7 @@ import * as jwt from 'jsonwebtoken';
       useFactory: (configService: ConfigService): JwtModuleOptions => {
         const expiresIn = configService.get<string>('jwt.expiresIn') || '24h';
         const secret = configService.get<string>('jwt.secret');
-        
+
         if (!secret) {
           throw new Error(
             'JWT_SECRET is required. Please set the JWT_SECRET environment variable.',

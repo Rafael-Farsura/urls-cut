@@ -8,7 +8,7 @@ import { IS_PUBLIC_KEY } from '@urls-cut/shared';
  * Guard que verifica autenticação via:
  * 1. Header X-User-Id propagado pelo API Gateway (KrakenD) - para rotas protegidas
  * 2. Validação direta do JWT no header Authorization - para rotas públicas quando token presente
- * 
+ *
  * Para rotas públicas: Se houver token JWT válido, valida e popula request.user.
  * Para rotas protegidas: Requer header X-User-Id do gateway ou valida JWT diretamente.
  */
@@ -29,21 +29,19 @@ export class GatewayAuthGuard {
 
     // Tenta obter userId do header X-User-Id (propagado pelo gateway)
     let userId = request.headers['x-user-id'] || request.headers['X-User-Id'];
-    
+
     // Se não houver X-User-Id, tenta validar JWT diretamente do header Authorization
     if (!userId) {
       const authHeader = request.headers['authorization'] || request.headers['Authorization'];
       if (authHeader && typeof authHeader === 'string') {
-        const token = authHeader.startsWith('Bearer ') 
-          ? authHeader.substring(7) 
-          : authHeader;
-        
+        const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
+
         if (token) {
           try {
             const jwtSecret = this.configService.get<string>('jwt.secret');
             if (jwtSecret) {
               // Valida o token com as mesmas opções que o auth-service usa
-              const payload = this.jwtService.verify(token, { 
+              const payload = this.jwtService.verify(token, {
                 secret: jwtSecret,
                 issuer: 'urls-cut',
                 audience: 'urls-cut-api',
@@ -87,4 +85,3 @@ export class GatewayAuthGuard {
     return true;
   }
 }
-

@@ -19,10 +19,11 @@ test/
 ### Pré-requisitos
 
 1. **PostgreSQL rodando:**
+
    ```bash
    # Usando Docker
    docker-compose up -d postgres
-   
+
    # Ou PostgreSQL local
    ```
 
@@ -51,21 +52,27 @@ npm run test:e2e -- urls.e2e-spec.ts
 ## Testes Disponíveis
 
 ### app.e2e-spec.ts
+
 Testes principais cobrindo:
+
 - Health check
 - Autenticação (registro e login)
 - URLs (criação, listagem, atualização, exclusão)
 - Redirecionamento e contabilização de cliques
 
 ### auth.e2e-spec.ts
+
 Testes focados em autenticação:
+
 - Registro de usuário
 - Login
 - Validações de entrada
 - Tratamento de erros
 
 ### urls.e2e-spec.ts
+
 Testes focados em URLs:
+
 - Criação pública e autenticada
 - Listagem com clickCount
 - Atualização e exclusão
@@ -73,7 +80,9 @@ Testes focados em URLs:
 - Ownership (permissões)
 
 ### resilience.e2e-spec.ts
+
 Testes de resiliência:
+
 - Health checks
 - Rate limiting
 - Timeout
@@ -84,4 +93,3 @@ Testes de resiliência:
 - Cada teste cria seus próprios dados
 - Dados são limpos após cada suite de testes
 - Testes são independentes entre si
-

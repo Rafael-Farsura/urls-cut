@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+**/node_modules/
 
 # Logs
 logs
@@ -47,7 +48,9 @@ lerna-debug.log*
 *.swo
 *~
 
-
 # Build artifacts
 services/*/dist/
 services/*/node_modules/
+
+# Código legado e arquivos descontinuados
+legacy-deprecated/

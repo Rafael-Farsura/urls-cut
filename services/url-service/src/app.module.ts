@@ -13,7 +13,12 @@ import { MetricsModule } from './modules/metrics/metrics.module';
 import { UrlsModule } from './modules/urls/urls.module';
 import { ClicksModule } from './modules/clicks/clicks.module';
 import { GatewayAuthGuard } from './common/guards/gateway-auth.guard';
-import { LoggingInterceptor, MetricsInterceptor, TimeoutInterceptor, HttpExceptionFilter } from '@urls-cut/shared';
+import {
+  LoggingInterceptor,
+  MetricsInterceptor,
+  TimeoutInterceptor,
+  HttpExceptionFilter,
+} from '@urls-cut/shared';
 
 @Module({
   imports: [
@@ -104,4 +109,3 @@ import { LoggingInterceptor, MetricsInterceptor, TimeoutInterceptor, HttpExcepti
   ],
 })
 export class AppModule {}
-

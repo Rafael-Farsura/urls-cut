@@ -23,7 +23,7 @@ if [ ! -d ".github/workflows" ]; then
     echo -e "${COLOR_YELLOW}⚠️  Diretório .github/workflows não encontrado${COLOR_NC}"
     echo "   Criando estrutura básica..."
     mkdir -p .github/workflows
-    ((WARNINGS++))
+    WARNINGS=$((WARNINGS + 1))
 fi
 
 # Verificar workflows esperados
@@ -32,10 +32,10 @@ EXPECTED_WORKFLOWS=("ci.yml" "release.yml")
 for workflow in "${EXPECTED_WORKFLOWS[@]}"; do
     if [ -f ".github/workflows/$workflow" ]; then
         echo -e "${COLOR_GREEN}✅ Workflow encontrado: $workflow${COLOR_NC}"
-        ((PASSED++))
+        PASSED=$((PASSED + 1))
     else
         echo -e "${COLOR_RED}❌ Workflow não encontrado: $workflow${COLOR_NC}"
-        ((FAILED++))
+        FAILED=$((FAILED + 1))
     fi
 done
 
@@ -56,10 +56,10 @@ if [ -f ".github/workflows/ci.yml" ]; then
     # Verificar jobs
     if grep -q "jobs:" .github/workflows/ci.yml; then
         echo -e "   ${COLOR_GREEN}✅ Jobs definidos${COLOR_NC}"
-        ((PASSED++))
+        PASSED=$((PASSED + 1))
     else
         echo -e "   ${COLOR_RED}❌ Nenhum job encontrado${COLOR_NC}"
-        ((FAILED++))
+        FAILED=$((FAILED + 1))
     fi
     
     # Verificar steps comuns
@@ -67,10 +67,10 @@ if [ -f ".github/workflows/ci.yml" ]; then
     for step in "${STEPS[@]}"; do
         if grep -qi "$step" .github/workflows/ci.yml; then
             echo -e "   ${COLOR_GREEN}✅ Step '$step' encontrado${COLOR_NC}"
-            ((PASSED++))
+            PASSED=$((PASSED + 1))
         else
             echo -e "   ${COLOR_YELLOW}⚠️  Step '$step' não encontrado${COLOR_NC}"
-            ((WARNINGS++))
+            WARNINGS=$((WARNINGS + 1))
         fi
     done
 fi
@@ -88,10 +88,10 @@ if [ -f ".github/workflows/release.yml" ]; then
     # Verificar trigger de release
     if grep -qi "release:" .github/workflows/release.yml || grep -qi "tags:" .github/workflows/release.yml; then
         echo -e "   ${COLOR_GREEN}✅ Trigger de release configurado${COLOR_NC}"
-        ((PASSED++))
+        PASSED=$((PASSED + 1))
     else
         echo -e "   ${COLOR_YELLOW}⚠️  Trigger de release não encontrado${COLOR_NC}"
-        ((WARNINGS++))
+        WARNINGS=$((WARNINGS + 1))
     fi
 fi
 
@@ -102,27 +102,27 @@ echo "📋 Verificando arquivos de configuração relacionados..."
 if [ -f "package.json" ]; then
     if grep -q "\"lint\"" package.json; then
         echo -e "${COLOR_GREEN}✅ Script 'lint' encontrado no package.json${COLOR_NC}"
-        ((PASSED++))
+        PASSED=$((PASSED + 1))
     fi
     
     if grep -q "\"test\"" package.json; then
         echo -e "${COLOR_GREEN}✅ Script 'test' encontrado no package.json${COLOR_NC}"
-        ((PASSED++))
+        PASSED=$((PASSED + 1))
     fi
     
     if grep -q "\"build\"" package.json; then
         echo -e "${COLOR_GREEN}✅ Script 'build' encontrado no package.json${COLOR_NC}"
-        ((PASSED++))
+        PASSED=$((PASSED + 1))
     fi
 fi
 
 # Verificar se há Dockerfiles (necessários para CI/CD)
 if [ -f "Dockerfile" ] || [ -f "services/auth-service/Dockerfile" ]; then
     echo -e "${COLOR_GREEN}✅ Dockerfiles encontrados${COLOR_NC}"
-    ((PASSED++))
+    PASSED=$((PASSED + 1))
 else
     echo -e "${COLOR_YELLOW}⚠️  Dockerfiles não encontrados${COLOR_NC}"
-    ((WARNINGS++))
+    WARNINGS=$((WARNINGS + 1))
 fi
 
 echo ""

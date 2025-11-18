@@ -29,21 +29,17 @@ describe('URLs (e2e)', () => {
 
     // Criar usuário e fazer login
     const email = `test-${Date.now()}@example.com`;
-    const registerRes = await request(app.getHttpServer())
-      .post('/api/auth/register')
-      .send({
-        email,
-        password: 'password123',
-      });
+    const registerRes = await request(app.getHttpServer()).post('/api/auth/register').send({
+      email,
+      password: 'password123',
+    });
 
     userId = registerRes.body.user.id;
 
-    const loginRes = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({
-        email,
-        password: 'password123',
-      });
+    const loginRes = await request(app.getHttpServer()).post('/api/auth/login').send({
+      email,
+      password: 'password123',
+    });
 
     authToken = loginRes.body.access_token;
   });
@@ -160,19 +156,15 @@ describe('URLs (e2e)', () => {
 
       // Criar outro usuário
       const email2 = `test-${Date.now()}@example.com`;
-      await request(app.getHttpServer())
-        .post('/api/auth/register')
-        .send({
-          email: email2,
-          password: 'password123',
-        });
+      await request(app.getHttpServer()).post('/api/auth/register').send({
+        email: email2,
+        password: 'password123',
+      });
 
-      const loginRes2 = await request(app.getHttpServer())
-        .post('/api/auth/login')
-        .send({
-          email: email2,
-          password: 'password123',
-        });
+      const loginRes2 = await request(app.getHttpServer()).post('/api/auth/login').send({
+        email: email2,
+        password: 'password123',
+      });
 
       const token2 = loginRes2.body.access_token;
 
@@ -209,11 +201,9 @@ describe('URLs (e2e)', () => {
   describe('GET /:shortCode', () => {
     it('deve redirecionar para URL original', async () => {
       const uniqueUrl = `https://example.com/redirect-test?t=${Date.now()}`;
-      const createRes = await request(app.getHttpServer())
-        .post('/api/urls')
-        .send({
-          originalUrl: uniqueUrl,
-        });
+      const createRes = await request(app.getHttpServer()).post('/api/urls').send({
+        originalUrl: uniqueUrl,
+      });
 
       const shortCode = createRes.body.shortCode;
       expect(shortCode).toBeDefined();
@@ -262,5 +252,3 @@ describe('URLs (e2e)', () => {
     });
   });
 });
-
-
