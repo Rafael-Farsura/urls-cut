@@ -10,8 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { UrlsRepository } from './urls.repository';
 import { ShortUrl } from './entities/short-url.entity';
 import { ClicksService } from '../clicks/clicks.service';
-import { ShortCodeGeneratorFactory } from '../../common/strategies/short-code/short-code-generator.factory';
-import { IShortCodeGenerator } from '../../common/strategies/short-code/short-code-generator.interface';
+import { ShortCodeGeneratorFactory, IShortCodeGenerator } from '@urls-cut/shared';
 
 @Injectable()
 export class UrlsService {

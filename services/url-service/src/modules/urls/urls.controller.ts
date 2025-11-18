@@ -21,8 +21,7 @@ import {
 import { UrlsService } from './urls.service';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { UpdateUrlDto } from './dto/update-url.dto';
-import { Public } from '../../common/decorators/public.decorator';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { Public, CurrentUser } from '@urls-cut/shared';
 
 interface UserPayload {
   id: string;

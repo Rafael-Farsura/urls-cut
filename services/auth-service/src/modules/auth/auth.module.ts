@@ -18,7 +18,14 @@ import * as jwt from 'jsonwebtoken';
       inject: [ConfigService],
       useFactory: (configService: ConfigService): JwtModuleOptions => {
         const expiresIn = configService.get<string>('jwt.expiresIn') || '24h';
-        const secret = configService.get<string>('jwt.secret') || 'your-super-secret-jwt-key-change-in-production';
+        const secret = configService.get<string>('jwt.secret');
+        
+        if (!secret) {
+          throw new Error(
+            'JWT_SECRET is required. Please set the JWT_SECRET environment variable.',
+          );
+        }
+
         return {
           secret,
           signOptions: {

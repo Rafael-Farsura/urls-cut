@@ -24,11 +24,8 @@ urls-cut/
 │   │   │   │       ├── users.repository.ts
 │   │   │   │       └── entities/
 │   │   │   │           └── user.entity.ts
-│   │   │   ├── common/              # Recursos compartilhados do serviço
-│   │   │   │   ├── decorators/
-│   │   │   │   ├── guards/
-│   │   │   │   ├── interceptors/
-│   │   │   │   └── filters/
+│   │   │   ├── common/              # Recursos específicos do serviço
+│   │   │   │   └── guards/         # Guards específicos (ex: GatewayAuthGuard)
 │   │   │   ├── config/
 │   │   │   ├── database/
 │   │   │   ├── modules/
@@ -74,15 +71,21 @@ urls-cut/
 ├── packages/                         # Pacotes compartilhados
 │   └── shared/                      # Código compartilhado entre serviços
 │       ├── src/
-│       │   ├── common/              # Guards, decorators, filters, interceptors
-│       │   │   ├── decorators/
-│       │   │   ├── guards/
-│       │   │   ├── interceptors/
-│       │   │   ├── filters/
-│       │   │   └── services/      # Circuit breaker, retry, etc.
-│       │   ├── config/            # Configurações compartilhadas
-│       │   └── index.ts
-│       └── package.json
+│       │   ├── common/              # Recursos compartilhados
+│       │   │   ├── decorators/     # @Public(), @CurrentUser(), IS_PUBLIC_KEY
+│       │   │   ├── guards/         # JwtAuthGuard
+│       │   │   ├── interceptors/   # LoggingInterceptor, MetricsInterceptor, TimeoutInterceptor
+│       │   │   ├── filters/        # HttpExceptionFilter
+│       │   │   ├── services/       # CircuitBreakerService, RetryService
+│       │   │   └── strategies/     # Short-code generators (HashBasedGenerator, RandomGenerator)
+│       │   ├── config/             # Configurações compartilhadas
+│       │   │   ├── app.config.ts
+│       │   │   ├── database.config.ts
+│       │   │   ├── jwt.config.ts
+│       │   │   └── observability.config.ts
+│       │   └── index.ts            # Exports principais
+│       ├── package.json
+│       └── tsconfig.json
 ├── gateway/                         # API Gateway
 │   └── krakend/                    # Configuração KrakenD
 │       └── krakend.json           # Configuração de roteamento e validação JWT
@@ -114,13 +117,10 @@ urls-cut/
 │   └── workflows/
 │       ├── ci.yml                  # CI/CD pipeline
 │       └── release.yml             # Release automation
-├── docker-compose.yml              # Docker Compose (monolítico)
-├── docker-compose.monorepo.yml     # Docker Compose (monorepo)
-├── Dockerfile                      # Dockerfile (monolítico)
+├── docker-compose.monorepo.yml     # Docker Compose (monorepo) - obrigatório
 ├── .env.example
 ├── CHANGELOG.md
 ├── README.md
-├── README_MONOREPO.md             # Documentação do monorepo
 └── package.json
 ```
 
@@ -158,36 +158,56 @@ Módulo de cliques:
 - Registro de cliques
 - Estatísticas de acesso
 
-### `/src/common`
+### `/packages/shared` (Código Compartilhado)
 
-Recursos compartilhados entre módulos:
+⚠️ **IMPORTANTE**: A partir da Fase 2, todo o código compartilhado foi centralizado em `packages/shared/` e é usado via `@urls-cut/shared` nos serviços.
 
-#### `/src/common/decorators`
-Decorators customizados:
+**Antes** (código duplicado):
+- Cada serviço tinha sua própria cópia de decorators, filters, interceptors, guards, strategies
+
+**Agora** (código centralizado):
+- Código compartilhado em `packages/shared/src/common/`
+- Serviços importam via `import { ... } from '@urls-cut/shared'`
+- Elimina duplicação e facilita manutenção
+
+#### `/packages/shared/src/common/decorators`
+Decorators compartilhados:
 - `@CurrentUser()`: Extrai usuário do request
 - `@Public()`: Marca rotas públicas (bypass auth)
+- `IS_PUBLIC_KEY`: Constante para metadados
 
-#### `/src/common/guards`
-Guards para proteção de rotas:
-- `JwtAuthGuard`: Verifica token JWT
-- `RolesGuard`: Verifica permissões (futuro)
+#### `/packages/shared/src/common/guards`
+Guards compartilhados:
+- `JwtAuthGuard`: Verifica token JWT (usado no auth-service)
 
-#### `/src/common/interceptors`
-Interceptors para transformação:
-- `LoggingInterceptor`: Log de requisições
-- `TransformInterceptor`: Transforma respostas
+#### `/packages/shared/src/common/interceptors`
+Interceptors compartilhados:
+- `LoggingInterceptor`: Log de requisições e respostas
+- `MetricsInterceptor`: Coleta de métricas Prometheus
+- `TimeoutInterceptor`: Timeout para requisições
 
-#### `/src/common/pipes`
-Pipes de validação e transformação:
-- `ValidationPipe`: Validação automática de DTOs
+#### `/packages/shared/src/common/filters`
+Exception filters compartilhados:
+- `HttpExceptionFilter`: Tratamento global de exceções formatado
 
-#### `/src/common/filters`
-Exception filters:
-- `HttpExceptionFilter`: Tratamento global de exceções
+#### `/packages/shared/src/common/services`
+Serviços de resiliência compartilhados:
+- `CircuitBreakerService`: Circuit breaker pattern
+- `RetryService`: Retry pattern com exponential backoff
 
-#### `/src/common/strategies`
+#### `/packages/shared/src/common/strategies`
 Implementações do Strategy Pattern:
-- Geração de código curto (hash-based, random)
+- `ShortCodeGeneratorFactory`: Factory para geradores
+- `HashBasedGenerator`: Geração baseada em hash
+- `RandomGenerator`: Geração aleatória
+
+### `/services/*/src/common` (Recursos Específicos do Serviço)
+
+Apenas recursos específicos de cada serviço:
+- **auth-service**: Apenas `guards/` se necessário (atualmente vazio)
+- **url-service**: `guards/gateway-auth.guard.ts` (específico para gateway)
+
+> **Nota**: Decorators, filters, interceptors e strategies compartilhados estão em `packages/shared/` e são importados via `@urls-cut/shared`.
 
 ### `/src/config`
 
@@ -376,4 +396,4 @@ urls-cut/
 └── infrastructure/
 ```
 
-Detalhes completos em [Funcionalidades Avançadas](./ADVANCED_FEATURES.md).
+Detalhes completos no README.md principal.

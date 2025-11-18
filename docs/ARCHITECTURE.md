@@ -37,7 +37,14 @@ O sistema foi migrado para uma arquitetura de monorepo com separação de servi�
 - **Escalabilidade Independente**: Serviços podem ser escalados separadamente
 - **Desenvolvimento Paralelo**: Equipes podem trabalhar em serviços diferentes
 - **API Gateway**: Ponto único de entrada com validação JWT, rate limiting e roteamento
-- **Código Compartilhado**: Pacote `shared` para código comum entre serviços
+- **Código Compartilhado**: Pacote `packages/shared` centralizado para código comum entre serviços
+  - Decorators: `@Public()`, `@CurrentUser()`
+  - Guards: `JwtAuthGuard`
+  - Interceptors: `LoggingInterceptor`, `MetricsInterceptor`, `TimeoutInterceptor`
+  - Filters: `HttpExceptionFilter`
+  - Services: `CircuitBreakerService`, `RetryService`
+  - Strategies: Short-code generators (`HashBasedGenerator`, `RandomGenerator`)
+  - Usado via `import { ... } from '@urls-cut/shared'` nos serviços
 
 ## Arquitetura NestJS
 
@@ -185,5 +192,5 @@ Para implementações mais avançadas, consulte:
 - **Resiliência**: Circuit breaker, retry, timeout, fallback patterns
 - **Changelog**: Versionamento semântico com git tags
 
-Detalhes completos em [Funcionalidades Avançadas](./ADVANCED_FEATURES.md).
+Detalhes completos no README.md principal.
 

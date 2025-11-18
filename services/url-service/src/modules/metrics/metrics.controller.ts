@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { Public } from '../../common/decorators/public.decorator';
+import { Public } from '@urls-cut/shared';
 import { register } from 'prom-client';
 
 /**

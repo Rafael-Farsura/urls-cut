@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER, Reflector } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import appConfig from './config/app.config';
@@ -10,9 +10,7 @@ import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
-import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { JwtAuthGuard, LoggingInterceptor, HttpExceptionFilter } from '@urls-cut/shared';
 
 @Module({
   imports: [
@@ -45,7 +43,10 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useFactory: (reflector: Reflector) => {
+        return new JwtAuthGuard(reflector);
+      },
+      inject: [Reflector],
     },
     {
       provide: APP_GUARD,
@@ -53,11 +54,17 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
+      useFactory: (configService: ConfigService) => {
+        return new LoggingInterceptor(configService);
+      },
+      inject: [ConfigService],
     },
     {
       provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
+      useFactory: (configService: ConfigService) => {
+        return new HttpExceptionFilter(configService);
+      },
+      inject: [ConfigService],
     },
   ],
 })

@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { HttpExceptionFilter } from '@urls-cut/shared';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -12,6 +12,25 @@ async function bootstrap() {
   const port = configService.get<number>('app.port') || parseInt(process.env.PORT || '3001', 10);
   const nodeEnv = configService.get<string>('NODE_ENV') || 'development';
   const serviceName = configService.get<string>('SERVICE_NAME') || 'auth-service';
+
+  // Validação de variáveis de ambiente obrigatórias
+  if (nodeEnv === 'production') {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      console.error('❌ ERROR: JWT_SECRET is required in production environment');
+      console.error('   Please set the JWT_SECRET environment variable.');
+      console.error('   Generate a secure secret: openssl rand -base64 32');
+      process.exit(1);
+    }
+
+    const dbHost = process.env.DB_HOST;
+    if (!dbHost) {
+      console.error('❌ ERROR: DB_HOST is required in production environment');
+      process.exit(1);
+    }
+
+    console.log('✅ Environment validation passed');
+  }
 
   app.enableCors({
     origin: configService.get<string>('CORS_ORIGIN') || '*',

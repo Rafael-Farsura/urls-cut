@@ -1,28 +1,23 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER, Reflector } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
-import jwtConfig from './config/jwt.config';
 import observabilityConfig from './config/observability.config';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { UrlsModule } from './modules/urls/urls.module';
 import { ClicksModule } from './modules/clicks/clicks.module';
-import { AuthModule } from './common/auth/auth.module';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
-import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
-import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
-import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { GatewayAuthGuard } from './common/guards/gateway-auth.guard';
+import { LoggingInterceptor, MetricsInterceptor, TimeoutInterceptor, HttpExceptionFilter } from '@urls-cut/shared';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, jwtConfig, observabilityConfig],
+      load: [appConfig, databaseConfig, observabilityConfig],
       envFilePath: ['.env.local', '.env'],
     }),
     ThrottlerModule.forRootAsync({
@@ -44,14 +39,16 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     DatabaseModule,
     HealthModule,
     MetricsModule,
-    AuthModule,
     UrlsModule,
     ClicksModule,
   ],
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useFactory: (reflector: Reflector) => {
+        return new GatewayAuthGuard(reflector);
+      },
+      inject: [Reflector],
     },
     {
       provide: APP_GUARD,
@@ -59,19 +56,31 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
+      useFactory: (configService: ConfigService) => {
+        return new LoggingInterceptor(configService);
+      },
+      inject: [ConfigService],
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: MetricsInterceptor,
+      useFactory: (configService: ConfigService) => {
+        return new MetricsInterceptor(configService);
+      },
+      inject: [ConfigService],
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: TimeoutInterceptor,
+      useFactory: (configService: ConfigService) => {
+        return new TimeoutInterceptor(configService);
+      },
+      inject: [ConfigService],
     },
     {
       provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
+      useFactory: (configService: ConfigService) => {
+        return new HttpExceptionFilter(configService);
+      },
+      inject: [ConfigService],
     },
   ],
 })

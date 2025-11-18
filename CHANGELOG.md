@@ -5,6 +5,145 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [Unreleased] - 2025-01-17
+
+### Added
+- Limpeza e organização de documentação
+  - Removidos arquivos não relacionados ao Teste Backend End.md
+  - Mantidos apenas documentos essenciais e relacionados ao teste
+  - Consolidada documentação do monorepo e Docker no README.md
+
+### Fixed
+- Correção de build do pacote shared
+  - Adicionadas dependências faltantes no `packages/shared/package.json`:
+    - `@nestjs/core`, `@nestjs/passport`, `@nestjs/typeorm`, `express`
+    - `@types/express`, `@types/node` como devDependencies
+  - Excluídos arquivos de teste (`__tests__/**`, `*.spec.ts`) do build do shared via `tsconfig.json`
+  - Adicionado suporte a tipos Node.js (`types: ["node"]`) no `tsconfig.json`
+  - Build do shared agora funciona corretamente no Docker
+- Correção de runtime do módulo `@urls-cut/shared` no Docker
+  - Ajustados Dockerfiles para copiar o pacote shared completo (dist, package.json, node_modules) no stage de produção
+  - Ajustada estrutura de diretórios no stage de produção para manter paths relativos (`file:../../packages/shared`)
+  - Agora o npm consegue resolver o módulo shared corretamente em runtime
+  - Mantida estrutura do monorepo (`/app/services/auth-service` e `/app/packages/shared`)
+- Correção de injeção de dependências dos interceptors, filters, guards e generators do shared
+  - Ajustado `AppModule` de ambos os serviços para usar `useFactory` em vez de `useClass` para interceptors, filters e guards
+  - Ajustado `UrlsModule` para usar `useFactory` para `HashBasedGenerator`, `RandomGenerator` e `ShortCodeGeneratorFactory`
+  - Agora o `ConfigService` e `Reflector` são injetados explicitamente via `inject: [ConfigService]` e `inject: [Reflector]`
+  - Isso garante que as dependências sejam resolvidas corretamente pelo NestJS dependency injection
+  - Aplicado para:
+    - Guards: `JwtAuthGuard` (auth-service), `GatewayAuthGuard` (url-service)
+    - Interceptors: `LoggingInterceptor`, `MetricsInterceptor`, `TimeoutInterceptor`
+    - Filters: `HttpExceptionFilter`
+    - Generators: `HashBasedGenerator`, `RandomGenerator`, `ShortCodeGeneratorFactory` (url-service)
+- Fase 2: Migração de código compartilhado para `packages/shared/`
+  - Adicionada dependência `@urls-cut/shared` em ambos os serviços
+  - Criado arquivo `.env.example` com todas as variáveis de ambiente documentadas
+  - Estrutura de diretórios padronizada entre serviços
+  - Exportado `IS_PUBLIC_KEY` do shared para uso no GatewayAuthGuard
+
+- Fase 3: Atualizações de Documentação
+  - Atualizado `docs/PROJECT_STRUCTURE.md` para refletir uso de `packages/shared/`
+  - Atualizado `MONOREPO_MIGRATION.md` com informações sobre código compartilhado
+  - Atualizado `docs/ARCHITECTURE.md` com detalhes do pacote shared
+  - Atualizado `README.md` e `README_MONOREPO.md` com estrutura do shared
+  - Atualizado `docs/ADVANCED_FEATURES.md` com detalhes do pacote compartilhado
+
+- Fase 4: Verificação Final de Documentação
+  - Verificada consistência entre todas as documentações principais e técnicas
+  - Atualizado `AUDIT_REPORT.md` seção 4.2 com status resolvido (Fase 3)
+  - Garantida consistência entre todos os documentos
+  - Todas as documentações agora refletem a arquitetura atual do monorepo
+
+### Changed
+- Fase 2: Refatoração de imports para usar `packages/shared/`
+  - Atualizados todos os imports no `auth-service` para usar `@urls-cut/shared`
+  - Atualizados todos os imports no `url-service` para usar `@urls-cut/shared`
+  - Removido código duplicado (decorators, filters, interceptors, strategies)
+  - Atualizado `packages/shared/src/index.ts` para exportar strategies e IS_PUBLIC_KEY
+  - Atualizado `packages/shared/package.json` com dependências necessárias
+
+- Fase 3: Melhorias de Documentação
+  - Substituída referência à estrutura antiga `/src/common` por `/packages/shared` nas documentações
+  - Documentado uso de `@urls-cut/shared` nos serviços
+  - Adicionadas seções explicando benefícios da centralização do código
+
+### Removed
+- Fase 2: Remoção de código duplicado
+  - Removidos arquivos duplicados de `services/auth-service/src/common/` (decorators, filters, interceptors, guards)
+  - Removidos arquivos duplicados de `services/url-service/src/common/` (decorators, filters, interceptors, strategies)
+  - Todo código compartilhado agora está centralizado em `packages/shared/`
+
+- Limpeza de arquivos Docker legados
+  - Removidos arquivos Docker da aplicação monolítica (`docker-compose.yml`, `docker-compose.dev.yml`, `Dockerfile`, `Dockerfile.dev`)
+  - Mantido apenas `docker-compose.monorepo.yml` (obrigatório pelo teste) e Dockerfiles dos serviços (`services/auth-service/Dockerfile`, `services/url-service/Dockerfile`)
+  - Atualizado README.md removendo referências aos arquivos Docker legados
+
+- Limpeza de documentação não relacionada ao Teste Backend End.md
+  - Removidos arquivos de auditoria e correções não requeridos (`AUDIT_REPORT.md`, `CORRECTIONS_PLAN.md`)
+  - Removidos arquivos de fases não requeridos (`PHASE1_COMPLETED.md`, `PHASE2_COMPLETED.md`, `PHASE3_COMPLETED.md`, `PHASE4_COMPLETED.md`, `RESUMO_FINAL_TODAS_FASES.md`)
+  - Removidos arquivos de verificação não requeridos (`FEATURES_VERIFICATION.md`, `VERIFICATION_REPORT.md`)
+  - Removidos e consolidados arquivos de monorepo/Docker no README (`MONOREPO_MIGRATION.md`, `MONOREPO_STATUS.md`, `README_MONOREPO.md`, `README_DOCKER.md`, `TEST_QUICK_START.md`)
+  - Removido `commits.md` (roadmap não requerido)
+  - Removidos da pasta `docs/`: `ADVANCED_FEATURES.md`, `TESTING_GATEWAY_CICD.md`, `TYPESCRIPT_CONFIG.md`, `TESTING_GUIDE.md` (redundantes ou não essenciais)
+  - Mantidos apenas documentos essenciais: README.md, CHANGELOG.md, TAGS.md e documentação técnica em `docs/`
+
+### Changed
+
+- **Auditoria e Análise do Projeto**
+  - ✅ Auditoria completa do projeto realizada
+  - ✅ Identificação de problemas de código duplicado/legado
+  - ✅ Identificação de problemas de segurança (secrets hardcoded)
+  - ✅ Identificação de problemas de arquitetura (autenticação duplicada)
+  - ✅ Criação de relatórios: `AUDIT_REPORT.md` e `CORRECTIONS_PLAN.md`
+  - ✅ Documentações atualizadas com avisos sobre código legado
+  - ✅ Avisos de segurança adicionados ao README.md
+
+- **Fase 1: Correções Críticas Implementadas** ✅
+  - ✅ Removida autenticação JWT duplicada do `url-service`
+    - Criado `GatewayAuthGuard` simplificado que verifica apenas header `X-User-Id`
+    - Removido `AuthModule`, `JwtStrategy` e `JwtAuthGuard` do `url-service`
+    - Gateway (KrakenD) já valida JWT e propaga user ID
+  - ✅ Removidos secrets hardcoded
+    - Validação obrigatória de `JWT_SECRET` em produção
+    - Fallback apenas em desenvolvimento (com aviso)
+    - Script do gateway substitui secret em runtime
+  - ✅ Adicionada validação de variáveis de ambiente obrigatórias
+    - Validação no startup de ambos os serviços
+    - Falha rápida com mensagens claras se variáveis críticas estiverem ausentes
+
+### Security
+
+- ✅ **Corrigido**: Secrets JWT hardcoded removidos
+  - Validação obrigatória de `JWT_SECRET` em produção
+  - Fallback apenas em desenvolvimento com aviso
+  - Script do gateway valida e substitui secret em runtime
+- ✅ **Corrigido**: Validação de variáveis de ambiente obrigatórias implementada
+  - Validação no startup de `auth-service` e `url-service`
+  - Validação no script do gateway
+  - Mensagens de erro claras com instruções
+
+### Documentation
+
+- ✅ README.md atualizado com avisos sobre código legado em `src/`
+- ✅ FEATURES_VERIFICATION.md atualizado com problemas identificados
+- ✅ Criado `AUDIT_REPORT.md` com relatório completo de auditoria
+- ✅ Criado `CORRECTIONS_PLAN.md` com plano de correções
+
+### Fixed
+
+- ✅ Removida autenticação JWT duplicada do `url-service`
+- ✅ Removidos secrets hardcoded (validação obrigatória em produção)
+- ✅ Adicionada validação de variáveis de ambiente obrigatórias
+
+### Known Issues
+
+- ⚠️ Diretório `src/` ainda existe como código legado (não utilizado no monorepo)
+- ⚠️ Código duplicado entre `services/auth-service` e `services/url-service` (Fase 2)
+- ⚠️ Falta arquivo `.env.example` na raiz (criar manualmente)
+
+> 📝 **Consulte**: `AUDIT_REPORT.md` e `CORRECTIONS_PLAN.md` para detalhes completos e plano de correções.
+
 ## [0.8.0] - 2025-11-17
 
 ### Added
