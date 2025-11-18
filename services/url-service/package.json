@@ -11,6 +11,7 @@
     "start:prod": "node dist/main"
   },
   "dependencies": {
+    "@urls-cut/shared": "file:../../packages/shared",
     "@nestjs/common": "^10.3.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.4.20",
@@ -38,4 +39,3 @@
     "typescript": "^5.3.3"
   }
 }
-

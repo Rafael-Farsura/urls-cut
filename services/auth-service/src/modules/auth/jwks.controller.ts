@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Public } from '../../common/decorators/public.decorator';
+import { Public } from '@urls-cut/shared';
 
 /**
  * Controller para expor JWKS (JSON Web Key Set)
@@ -22,7 +22,11 @@ export class JwksController {
   getJwks() {
     // Para JWT com HS256, o gateway precisa da chave secreta
     // Em produção, considere usar RS256 com chaves públicas/privadas
-    const secret = this.configService.get<string>('jwt.secret') || 'secret';
+    const secret = this.configService.get<string>('jwt.secret');
+    
+    if (!secret) {
+      throw new Error('JWT_SECRET is not configured');
+    }
 
     // Retorna um formato simplificado para o KrakenD
     // Em produção com RS256, retornaria as chaves públicas

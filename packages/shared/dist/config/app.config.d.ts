@@ -1,0 +1,32 @@
+declare const _default: (() => {
+    nodeEnv: string;
+    port: number;
+    apiBaseUrl: string;
+    shortCodeLength: number;
+    shortCodeStrategy: string;
+    circuitBreakerThreshold: number;
+    circuitBreakerTimeout: number;
+    retryMaxAttempts: number;
+    retryInitialDelay: number;
+    retryMaxDelay: number;
+    retryFactor: number;
+    requestTimeout: number;
+    throttleTtl: number;
+    throttleLimit: number;
+}) & import("@nestjs/config").ConfigFactoryKeyHost<{
+    nodeEnv: string;
+    port: number;
+    apiBaseUrl: string;
+    shortCodeLength: number;
+    shortCodeStrategy: string;
+    circuitBreakerThreshold: number;
+    circuitBreakerTimeout: number;
+    retryMaxAttempts: number;
+    retryInitialDelay: number;
+    retryMaxDelay: number;
+    retryFactor: number;
+    requestTimeout: number;
+    throttleTtl: number;
+    throttleLimit: number;
+}>;
+export default _default;

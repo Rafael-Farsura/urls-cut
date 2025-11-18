@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { UrlsService } from './urls.service';
 import { ClicksService } from '../clicks/clicks.service';
-import { Public } from '../../common/decorators/public.decorator';
+import { Public } from '@urls-cut/shared';
 
 /**
  * Controller para redirecionamento de URLs encurtadas

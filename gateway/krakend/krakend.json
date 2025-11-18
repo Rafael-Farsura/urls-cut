@@ -63,6 +63,7 @@
         "auth/validator": {
           "alg": "HS256",
           "secret": "your-super-secret-jwt-key-change-in-production",
+          "_comment": "⚠️ SECURITY: This secret is replaced at runtime by start-krakend.sh script which generates /etc/krakend/symmetric.json from JWT_SECRET environment variable. In production, ensure JWT_SECRET is set securely.",
           "cache": true,
           "cache_duration": 3600,
           "issuer": "urls-cut",
@@ -119,6 +120,7 @@
         "auth/validator": {
           "alg": "HS256",
           "secret": "your-super-secret-jwt-key-change-in-production",
+          "_comment": "⚠️ SECURITY: This secret is replaced at runtime by start-krakend.sh script which generates /etc/krakend/symmetric.json from JWT_SECRET environment variable. In production, ensure JWT_SECRET is set securely.",
           "cache": true,
           "cache_duration": 3600,
           "issuer": "urls-cut",
@@ -149,6 +151,7 @@
         "auth/validator": {
           "alg": "HS256",
           "secret": "your-super-secret-jwt-key-change-in-production",
+          "_comment": "⚠️ SECURITY: This secret is replaced at runtime by start-krakend.sh script which generates /etc/krakend/symmetric.json from JWT_SECRET environment variable. In production, ensure JWT_SECRET is set securely.",
           "cache": true,
           "cache_duration": 3600,
           "issuer": "urls-cut",

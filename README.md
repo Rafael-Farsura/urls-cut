@@ -104,15 +104,22 @@ urls-cut/
 │       ├── Dockerfile
 │       └── package.json
 ├── packages/                   # Pacotes compartilhados
-│   └── shared/                # Código compartilhado
+│   └── shared/                # Código compartilhado entre serviços
 │       └── src/
-│           ├── common/        # Guards, decorators, filters, interceptors
-│           └── config/        # Configurações compartilhadas
+│           ├── common/        # Recursos compartilhados
+│           │   ├── decorators/ # @Public(), @CurrentUser()
+│           │   ├── guards/     # JwtAuthGuard
+│           │   ├── interceptors/ # LoggingInterceptor, MetricsInterceptor, TimeoutInterceptor
+│           │   ├── filters/     # HttpExceptionFilter
+│           │   ├── services/    # CircuitBreakerService, RetryService
+│           │   └── strategies/  # Short-code generators
+│           ├── config/        # Configurações compartilhadas
+│           └── index.ts       # Exports principais (@urls-cut/shared)
 ├── gateway/                    # API Gateway
 │   └── krakend/               # Configuração KrakenD
 │       └── krakend.json
-├── src/                        # Código legado (referência)
-│   └── modules/               # Módulos originais
+├── src/                        # ⚠️ CÓDIGO LEGADO - Não utilizado no monorepo
+│   └── modules/               # Módulos originais (mantido apenas para referência)
 ├── database/
 │   └── schema.sql             # Database schema
 ├── docs/                       # Documentação completa
@@ -122,14 +129,12 @@ urls-cut/
 │   └── ...
 ├── test/                       # Testes E2E
 ├── scripts/                    # Scripts de teste e automação
-├── docker-compose.yml          # Docker Compose original
-├── docker-compose.monorepo.yml # Docker Compose do monorepo
-├── Dockerfile
+├── docker-compose.monorepo.yml # Docker Compose do monorepo (obrigatório)
 ├── .env.example
 └── README.md
 ```
 
-> **Nota**: O código em `src/` ainda existe para referência, mas o sistema principal está nos serviços do monorepo.
+> ⚠️ **IMPORTANTE**: O código em `src/` é **LEGADO** e não é utilizado no monorepo. Ele foi mantido apenas para referência histórica. O sistema principal está nos serviços (`services/auth-service` e `services/url-service`).
 
 ## 📋 Pré-requisitos
 
@@ -142,7 +147,7 @@ urls-cut/
 
 ## 🚀 Instalação
 
-### Opção 1: Monorepo com Docker Compose (Recomendado)
+### Opção 1: Docker Compose (Recomendado)
 
 ```bash
 # Clone o repositório
@@ -171,20 +176,6 @@ docker-compose -f docker-compose.monorepo.yml down
 - **PostgreSQL**: localhost:5432
 
 > **Recomendado**: Use o API Gateway (porta 8080) para todas as requisições. Os serviços individuais (3001, 3002) são para desenvolvimento/debug.
-
-Para mais detalhes sobre o monorepo, consulte [README_MONOREPO.md](./README_MONOREPO.md).
-
-### Opção 2: Docker Compose Original (Aplicação Monolítica)
-
-```bash
-# Desenvolvimento (com hot reload)
-docker-compose -f docker-compose.dev.yml up
-
-# Ou produção
-docker-compose up -d
-```
-
-Para mais detalhes sobre Docker, consulte [README_DOCKER.md](./README_DOCKER.md).
 
 ### Opção 2: Instalação Local
 
@@ -364,7 +355,10 @@ ELASTIC_APM_SERVICE_NAME=url-shortener
 - Código de lógica de negócio
 - Secrets em código (usar variáveis de ambiente ou secret managers)
 
-> **Importante**: Nunca commite arquivos `.env` com valores reais. Use `.env.example` como template.
+> **Importante**: 
+> - ⚠️ Nunca commite arquivos `.env` com valores reais. Use `.env.example` como template.
+> - ⚠️ **CRÍTICO**: Em produção, `JWT_SECRET` deve ser obrigatório e seguro. Gere um secret seguro: `openssl rand -base64 32`
+> - ⚠️ Não use secrets hardcoded em produção. Sempre defina variáveis de ambiente.
 
 ## 🏃 Executando o Projeto
 
@@ -527,7 +521,6 @@ Para mais detalhes, consulte:
 - [Diagramas](./docs/DIAGRAMS.md)
 - [Observabilidade](./docs/OBSERVABILITY.md)
 - [Validação de Entrada](./docs/VALIDATION.md)
-- [Funcionalidades Avançadas](./docs/ADVANCED_FEATURES.md) - API Gateway, Monorepo, CI/CD, Resiliência
 - [Checklist de Requisitos](./docs/REQUIREMENTS_CHECKLIST.md)
 
 ## 📊 Escalabilidade Horizontal
@@ -614,17 +607,6 @@ O projeto segue versionamento semântico:
 - **0.7.1**: Correções de testes e melhorias
 - **0.8.0**: Monorepo e API Gateway
 
-## 🗺 Roadmap de Implementação
-
-O roadmap completo de implementação, organizado por commits, está disponível em [commits.md](./commits.md).
-
-O roadmap inclui:
-
-- ✅ Ordem de implementação das funcionalidades
-- ✅ Título e descrição de cada commit
-- ✅ Arquivos modificados em cada etapa
-- ✅ 17 fases de desenvolvimento
-- ✅ ~55 commits planejados
 
 ## 📝 Licença
 

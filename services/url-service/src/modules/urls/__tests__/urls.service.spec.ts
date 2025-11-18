@@ -9,8 +9,7 @@ import {
 import { UrlsService } from '../urls.service';
 import { UrlsRepository } from '../urls.repository';
 import { ClicksService } from '../../clicks/clicks.service';
-import { ShortCodeGeneratorFactory } from '../../../common/strategies/short-code/short-code-generator.factory';
-import { IShortCodeGenerator } from '../../../common/strategies/short-code/short-code-generator.interface';
+import { ShortCodeGeneratorFactory, IShortCodeGenerator } from '@urls-cut/shared';
 import { ShortUrl } from '../entities/short-url.entity';
 
 describe('UrlsService', () => {
