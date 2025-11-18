@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER, Reflector } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import observabilityConfig from './config/observability.config';
+import jwtConfig from './config/jwt.config';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
@@ -17,8 +19,25 @@ import { LoggingInterceptor, MetricsInterceptor, TimeoutInterceptor, HttpExcepti
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, observabilityConfig],
+      load: [appConfig, databaseConfig, observabilityConfig, jwtConfig],
       envFilePath: ['.env.local', '.env'],
+    }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('jwt.secret');
+        if (!secret) {
+          throw new Error('JWT_SECRET is required');
+        }
+        return {
+          secret,
+          signOptions: {
+            issuer: 'urls-cut',
+            audience: 'urls-cut-api',
+          },
+        };
+      },
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
@@ -45,10 +64,10 @@ import { LoggingInterceptor, MetricsInterceptor, TimeoutInterceptor, HttpExcepti
   providers: [
     {
       provide: APP_GUARD,
-      useFactory: (reflector: Reflector) => {
-        return new GatewayAuthGuard(reflector);
+      useFactory: (reflector: Reflector, jwtService: JwtService, configService: ConfigService) => {
+        return new GatewayAuthGuard(reflector, jwtService, configService);
       },
-      inject: [Reflector],
+      inject: [Reflector, JwtService, ConfigService],
     },
     {
       provide: APP_GUARD,

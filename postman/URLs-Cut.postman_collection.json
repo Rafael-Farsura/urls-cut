@@ -2,16 +2,17 @@
 	"info": {
 		"_postman_id": "urls-cut-api-collection",
 		"name": "URLs Cut API",
-		"description": "Coleção completa da API de encurtamento de URLs desenvolvida com NestJS",
+		"description": "Coleção completa da API de encurtamento de URLs desenvolvida com NestJS e API Gateway (KrakenD)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "urls-cut"
+		"_exporter_id": "urls-cut",
+		"version": "0.8.0"
 	},
 	"item": [
 		{
 			"name": "Health Check",
 			"item": [
 				{
-					"name": "Health Check",
+					"name": "Health Check (Gateway)",
 					"event": [
 						{
 							"listen": "test",
@@ -24,12 +25,6 @@
 									"pm.test(\"Response has status field\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.have.property('status');",
-									"    pm.expect(jsonData.status).to.eql('ok');",
-									"});",
-									"",
-									"pm.test(\"Response has timestamp\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('timestamp');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -48,7 +43,7 @@
 								"health"
 							]
 						},
-						"description": "Endpoint público para verificar o status da aplicação"
+						"description": "Endpoint público para verificar o status da aplicação através do API Gateway"
 					},
 					"response": []
 				}
@@ -76,6 +71,7 @@
 									"    // Salva o token automaticamente",
 									"    if (jsonData.access_token) {",
 									"        pm.environment.set('access_token', jsonData.access_token);",
+									"        console.log('Token salvo automaticamente');",
 									"    }",
 									"});",
 									"",
@@ -123,7 +119,7 @@
 								"register"
 							]
 						},
-						"description": "Registra um novo usuário no sistema. Retorna um token JWT e informações do usuário."
+						"description": "Registra um novo usuário no sistema. Retorna um token JWT (access_token) e informações do usuário."
 					},
 					"response": []
 				},
@@ -193,7 +189,7 @@
 								"login"
 							]
 						},
-						"description": "Autentica um usuário existente e retorna um token JWT. O token é salvo automaticamente na variável de ambiente 'access_token'."
+						"description": "Autentica um usuário existente e retorna um token JWT (access_token). O token é salvo automaticamente na variável de ambiente 'access_token'."
 					},
 					"response": []
 				},
@@ -306,6 +302,8 @@
 									"    pm.expect(jsonData).to.have.property('shortUrl');",
 									"    pm.expect(jsonData).to.have.property('shortCode');",
 									"    pm.expect(jsonData).to.have.property('originalUrl');",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('createdAt');",
 									"    ",
 									"    // Salva o shortCode e URL ID para uso posterior",
 									"    if (jsonData.shortCode) {",
@@ -316,9 +314,16 @@
 									"    }",
 									"});",
 									"",
-									"pm.test(\"Response has userId\", function () {",
+									"pm.test(\"Response has userId when authenticated\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.have.property('userId');",
+									"    ",
+									"    // Quando autenticado, userId deve ser preenchido",
+									"    if (pm.environment.get('access_token')) {",
+									"        pm.expect(jsonData.userId).to.not.be.null;",
+									"        pm.expect(jsonData.userId).to.not.be.undefined;",
+									"        console.log('userId salvo corretamente:', jsonData.userId);",
+									"    }",
 									"});"
 								],
 								"type": "text/javascript"
@@ -362,7 +367,7 @@
 								"urls"
 							]
 						},
-						"description": "Cria uma nova URL encurtada. Requer autenticação. O token é usado automaticamente do ambiente."
+						"description": "Cria uma nova URL encurtada com autenticação. O userId será salvo automaticamente. O token é usado automaticamente do ambiente."
 					},
 					"response": []
 				},
@@ -381,6 +386,9 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.have.property('shortUrl');",
 									"    pm.expect(jsonData).to.have.property('shortCode');",
+									"    pm.expect(jsonData).to.have.property('originalUrl');",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('createdAt');",
 									"    ",
 									"    // Salva o shortCode",
 									"    if (jsonData.shortCode) {",
@@ -390,7 +398,7 @@
 									"",
 									"pm.test(\"userId is null for public request\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    // userId pode ser null para requisições públicas",
+									"    // userId deve ser null para requisições públicas",
 									"    pm.expect(jsonData.userId === null || jsonData.userId === undefined).to.be.true;",
 									"});"
 								],
@@ -484,6 +492,13 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.have.property('total');",
 									"    pm.expect(jsonData.total).to.be.a('number');",
+									"});",
+									"",
+									"pm.test(\"URLs have clickCount\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.urls && jsonData.urls.length > 0) {",
+									"        pm.expect(jsonData.urls[0]).to.have.property('clickCount');",
+									"    }",
 									"});"
 								],
 								"type": "text/javascript"
@@ -513,7 +528,7 @@
 								"urls"
 							]
 						},
-						"description": "Lista todas as URLs encurtadas do usuário autenticado. Inclui contagem de cliques."
+						"description": "Lista todas as URLs encurtadas do usuário autenticado. Inclui contagem de cliques. Requer autenticação com Bearer token."
 					},
 					"response": []
 				},
@@ -549,6 +564,33 @@
 									"            }",
 									"        }",
 									"    });",
+									"}",
+									"",
+									"// Garante que temos um URL ID",
+									"if (!pm.environment.get('last_url_id')) {",
+									"    console.log('Nenhum URL ID encontrado. Criando uma URL primeiro...');",
+									"    ",
+									"    pm.sendRequest({",
+									"        url: pm.environment.get('base_url') + '/api/urls',",
+									"        method: 'POST',",
+									"        header: {",
+									"            'Content-Type': 'application/json',",
+									"            'Authorization': 'Bearer ' + pm.environment.get('access_token')",
+									"        },",
+									"        body: {",
+									"            mode: 'raw',",
+									"            raw: JSON.stringify({",
+									"                originalUrl: 'https://www.example.com/temp'",
+									"            })",
+									"        }",
+									"    }, function (err, res) {",
+									"        if (!err && res.code === 201) {",
+									"            var jsonData = res.json();",
+									"            if (jsonData.id) {",
+									"                pm.environment.set('last_url_id', jsonData.id);",
+									"            }",
+									"        }",
+									"    });",
 									"}"
 								],
 								"type": "text/javascript"
@@ -566,6 +608,11 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.have.property('originalUrl');",
 									"    pm.expect(jsonData.originalUrl).to.eql('https://www.example.com/updated');",
+									"});",
+									"",
+									"pm.test(\"Response has updatedAt\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('updatedAt');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -617,7 +664,7 @@
 								}
 							]
 						},
-						"description": "Atualiza a URL original de uma URL encurtada. Requer autenticação e permissão (ser o dono da URL)."
+						"description": "Atualiza a URL original de uma URL encurtada. Requer autenticação e permissão (ser o dono da URL). Use Bearer token no header Authorization."
 					},
 					"response": []
 				},
@@ -653,6 +700,33 @@
 									"            }",
 									"        }",
 									"    });",
+									"}",
+									"",
+									"// Garante que temos um URL ID",
+									"if (!pm.environment.get('last_url_id')) {",
+									"    console.log('Nenhum URL ID encontrado. Criando uma URL primeiro...');",
+									"    ",
+									"    pm.sendRequest({",
+									"        url: pm.environment.get('base_url') + '/api/urls',",
+									"        method: 'POST',",
+									"        header: {",
+									"            'Content-Type': 'application/json',",
+									"            'Authorization': 'Bearer ' + pm.environment.get('access_token')",
+									"        },",
+									"        body: {",
+									"            mode: 'raw',",
+									"            raw: JSON.stringify({",
+									"                originalUrl: 'https://www.example.com/temp'",
+									"            })",
+									"        }",
+									"    }, function (err, res) {",
+									"        if (!err && res.code === 201) {",
+									"            var jsonData = res.json();",
+									"            if (jsonData.id) {",
+									"                pm.environment.set('last_url_id', jsonData.id);",
+									"            }",
+									"        }",
+									"    });",
 									"}"
 								],
 								"type": "text/javascript"
@@ -662,8 +736,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200 or 204\", function () {",
-									"    pm.expect([200, 204]).to.include(pm.response.code);",
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -701,7 +775,7 @@
 								}
 							]
 						},
-						"description": "Deleta uma URL encurtada. Requer autenticação e permissão (ser o dono da URL)."
+						"description": "Deleta uma URL encurtada (soft delete). Requer autenticação e permissão (ser o dono da URL). Use Bearer token no header Authorization."
 					},
 					"response": []
 				}
@@ -742,7 +816,7 @@
 								"{{last_short_code}}"
 							]
 						},
-						"description": "Redireciona para a URL original usando o código curto. Contabiliza o clique automaticamente."
+						"description": "Redireciona para a URL original usando o código curto. Contabiliza o clique automaticamente. Não requer autenticação."
 					},
 					"response": []
 				}
@@ -782,7 +856,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"invalid-email\",\n    \"password\": \"123456\"\n}",
+							"raw": "{\n    \"email\": \"invalid-email\",\n    \"password\": \"password123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -847,7 +921,7 @@
 								"register"
 							]
 						},
-						"description": "Testa validação de senha com menos de 6 caracteres"
+						"description": "Testa validação de senha com menos de 8 caracteres"
 					},
 					"response": []
 				},
@@ -898,7 +972,7 @@
 					"response": []
 				},
 				{
-					"name": "Acessar URL sem Token",
+					"name": "Listar URLs sem Token",
 					"event": [
 						{
 							"listen": "test",
@@ -906,6 +980,11 @@
 								"exec": [
 									"pm.test(\"Status code is 401\", function () {",
 									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Response has error message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('message');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -926,6 +1005,100 @@
 							]
 						},
 						"description": "Testa acesso a endpoint protegido sem token de autenticação"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar URL sem Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originalUrl\": \"https://www.example.com/updated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/urls/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"urls",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "00000000-0000-0000-0000-000000000000",
+									"description": "ID de exemplo"
+								}
+							]
+						},
+						"description": "Testa atualização de URL sem token de autenticação"
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar URL sem Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/urls/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"urls",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "00000000-0000-0000-0000-000000000000",
+									"description": "ID de exemplo"
+								}
+							]
+						},
+						"description": "Testa deleção de URL sem token de autenticação"
 					},
 					"response": []
 				}
@@ -959,8 +1132,8 @@
 		{
 			"key": "base_url",
 			"value": "http://localhost:8080",
-			"type": "string"
+			"type": "string",
+			"description": "API Gateway (KrakenD) - ponto único de entrada"
 		}
 	]
 }
-

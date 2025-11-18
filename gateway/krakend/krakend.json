@@ -60,16 +60,7 @@
         }
       ],
       "extra_config": {
-        "auth/validator": {
-          "alg": "HS256",
-          "secret": "your-super-secret-jwt-key-change-in-production",
-          "_comment": "⚠️ SECURITY: This secret is replaced at runtime by start-krakend.sh script which generates /etc/krakend/symmetric.json from JWT_SECRET environment variable. In production, ensure JWT_SECRET is set securely.",
-          "cache": true,
-          "cache_duration": 3600,
-          "issuer": "urls-cut",
-          "audience": ["urls-cut-api"],
-          "propagate_claims": [["sub", "X-User-Id"]]
-        },
+        "_comment": "⚠️ JWT validation is handled by the backend service (url-service) via GatewayAuthGuard. The Authorization header is passed through to the backend.",
         "qos/rate_limit/router": {
           "max_rate": 100,
           "capacity": 100,
@@ -117,16 +108,7 @@
         }
       ],
       "extra_config": {
-        "auth/validator": {
-          "alg": "HS256",
-          "secret": "your-super-secret-jwt-key-change-in-production",
-          "_comment": "⚠️ SECURITY: This secret is replaced at runtime by start-krakend.sh script which generates /etc/krakend/symmetric.json from JWT_SECRET environment variable. In production, ensure JWT_SECRET is set securely.",
-          "cache": true,
-          "cache_duration": 3600,
-          "issuer": "urls-cut",
-          "audience": ["urls-cut-api"],
-          "propagate_claims": [["sub", "X-User-Id"]]
-        },
+        "_comment": "⚠️ JWT validation is handled by the backend service (url-service) via GatewayAuthGuard. The Authorization header is passed through to the backend.",
         "qos/rate_limit/router": {
           "max_rate": 50,
           "capacity": 50,
@@ -148,16 +130,7 @@
         }
       ],
       "extra_config": {
-        "auth/validator": {
-          "alg": "HS256",
-          "secret": "your-super-secret-jwt-key-change-in-production",
-          "_comment": "⚠️ SECURITY: This secret is replaced at runtime by start-krakend.sh script which generates /etc/krakend/symmetric.json from JWT_SECRET environment variable. In production, ensure JWT_SECRET is set securely.",
-          "cache": true,
-          "cache_duration": 3600,
-          "issuer": "urls-cut",
-          "audience": ["urls-cut-api"],
-          "propagate_claims": [["sub", "X-User-Id"]]
-        },
+        "_comment": "⚠️ JWT validation is handled by the backend service (url-service) via GatewayAuthGuard. The Authorization header is passed through to the backend.",
         "qos/rate_limit/router": {
           "max_rate": 50,
           "capacity": 50,

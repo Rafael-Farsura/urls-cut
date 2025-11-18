@@ -49,6 +49,7 @@ A coleção inclui scripts de pré-requisição que fazem login automático quan
 - Se o token `access_token` não existir, o script faz login automaticamente
 - O token é salvo automaticamente após login/registro
 - O `user_id` também é salvo automaticamente
+- **Formato de autenticação**: `Authorization: Bearer <token>` (configurado automaticamente)
 
 ### Testes Automatizados
 
@@ -58,12 +59,13 @@ Cada requisição inclui testes automatizados que verificam:
 - Estrutura das respostas
 - Validações de dados
 - Headers esperados
+- **Verificação de userId**: Testa se o `userId` é salvo corretamente quando autenticado
 
 ### Variáveis Automáticas
 
 As seguintes variáveis são salvas automaticamente:
 
-- `access_token` - Token JWT após login/registro
+- `access_token` - Token JWT após login/registro (formato: `Bearer <token>`)
 - `user_id` - ID do usuário autenticado
 - `last_short_code` - Último código curto criado
 - `last_url_id` - ID da última URL criada
@@ -79,11 +81,11 @@ As seguintes variáveis são salvas automaticamente:
 - `POST /api/auth/login` - Login com credenciais inválidas (teste de erro)
 
 ### 3. URLs
-- `POST /api/urls` - Criar URL encurtada (autenticado)
-- `POST /api/urls` - Criar URL encurtada (público)
-- `GET /api/urls` - Listar URLs do usuário
-- `PUT /api/urls/:id` - Atualizar URL
-- `DELETE /api/urls/:id` - Deletar URL
+- `POST /api/urls` - Criar URL encurtada (autenticado) - **Salva userId automaticamente**
+- `POST /api/urls` - Criar URL encurtada (público) - **userId será null**
+- `GET /api/urls` - Listar URLs do usuário - **Requer autenticação (Bearer token)**
+- `PUT /api/urls/:id` - Atualizar URL - **Requer autenticação (Bearer token)**
+- `DELETE /api/urls/:id` - Deletar URL - **Requer autenticação (Bearer token)**
 
 ### 4. Redirecionamento
 - `GET /:shortCode` - Redirecionar para URL original
@@ -92,7 +94,7 @@ As seguintes variáveis são salvas automaticamente:
 - Testes de validação de email inválido
 - Testes de validação de senha curta
 - Testes de URL inválida
-- Testes de acesso sem autenticação
+- Testes de acesso sem autenticação (GET, PUT, DELETE)
 
 ## 🔧 Configuração Avançada
 
@@ -118,10 +120,15 @@ As seguintes variáveis são salvas automaticamente:
 
 ## 📝 Notas
 
+- **Formato de autenticação**: Use `Authorization: Bearer <token>` (configurado automaticamente na coleção)
 - O token JWT expira após 24h (configurável)
-- URLs públicas não requerem autenticação
+- **POST /api/urls**: Aceita requisições com e sem autenticação
+  - Com token: `userId` é salvo automaticamente
+  - Sem token: `userId` será `null`
+- **GET, PUT, DELETE /api/urls**: Requerem autenticação obrigatória
 - URLs autenticadas são vinculadas ao usuário
 - O redirecionamento contabiliza cliques automaticamente
+- A resposta de login/registro retorna `access_token` (não `token`)
 
 ## 🐛 Troubleshooting
 
@@ -136,6 +143,8 @@ As seguintes variáveis são salvas automaticamente:
 - Execute o Login novamente
 - Verifique se o token não expirou
 - Confirme que o ambiente está selecionado
+- **Importante**: Certifique-se de usar o formato `Authorization: Bearer <token>` (a coleção faz isso automaticamente)
+- Para rotas protegidas (GET, PUT, DELETE), o token é obrigatório
 
 ### Erro de conexão
 
