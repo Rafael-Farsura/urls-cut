@@ -149,7 +149,7 @@ As seguintes variáveis são salvas automaticamente:
 ### Erro de conexão
 
 - Verifique se os serviços estão rodando:
-  - Monorepo: `docker-compose -f docker-compose.monorepo.yml up -d`
+  - Monorepo: `docker-compose up -d`
   - Monolítico: `npm run start:dev`
 - Confirme que a `base_url` está correta:
   - Monorepo: `http://localhost:8080` (API Gateway)

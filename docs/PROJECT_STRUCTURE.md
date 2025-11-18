@@ -89,8 +89,6 @@ urls-cut/
 ├── gateway/                         # API Gateway
 │   └── krakend/                    # Configuração KrakenD
 │       └── krakend.json           # Configuração de roteamento e validação JWT
-├── src/                             # Código legado (referência)
-│   └── modules/                     # Módulos originais (monolítico)
 ├── database/
 │   ├── migrations/
 │   └── schema.sql                  # Schema completo
@@ -117,7 +115,7 @@ urls-cut/
 │   └── workflows/
 │       ├── ci.yml                  # CI/CD pipeline
 │       └── release.yml             # Release automation
-├── docker-compose.monorepo.yml     # Docker Compose (monorepo) - obrigatório
+├── docker-compose.yml              # Docker Compose (monorepo) - obrigatório
 ├── .env.example
 ├── CHANGELOG.md
 ├── README.md

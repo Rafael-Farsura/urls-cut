@@ -118,8 +118,6 @@ urls-cut/
 ├── gateway/                    # API Gateway
 │   └── krakend/               # Configuração KrakenD
 │       └── krakend.json
-├── src/                        # ⚠️ CÓDIGO LEGADO - Não utilizado no monorepo
-│   └── modules/               # Módulos originais (mantido apenas para referência)
 ├── database/
 │   └── schema.sql             # Database schema
 ├── docs/                       # Documentação completa
@@ -129,12 +127,11 @@ urls-cut/
 │   └── ...
 ├── test/                       # Testes E2E
 ├── scripts/                    # Scripts de teste e automação
-├── docker-compose.monorepo.yml # Docker Compose do monorepo (obrigatório)
+├── docker-compose.yml # Docker Compose do monorepo (obrigatório)
 ├── .env.example
 └── README.md
 ```
 
-> ⚠️ **IMPORTANTE**: O código em `src/` é **LEGADO** e não é utilizado no monorepo. Ele foi mantido apenas para referência histórica. O sistema principal está nos serviços (`services/auth-service` e `services/url-service`).
 
 ## 📋 Pré-requisitos
 
@@ -160,13 +157,13 @@ cp .env.example .env
 # Edite o .env com suas configurações (opcional para desenvolvimento)
 
 # Subir todos os serviços (PostgreSQL + Auth Service + URL Service + API Gateway)
-docker-compose -f docker-compose.monorepo.yml up -d
+docker-compose up -d
 
 # Ver logs
-docker-compose -f docker-compose.monorepo.yml logs -f
+docker-compose logs -f
 
 # Parar serviços
-docker-compose -f docker-compose.monorepo.yml down
+docker-compose down
 ```
 
 **Acessar Serviços:**
@@ -454,7 +451,7 @@ npm run test:ci
 ### Estrutura de Testes
 
 - **Unitários**: Testam serviços, repositórios, guards, interceptors e estratégias isoladamente
-  - Localização: `src/**/__tests__/*.spec.ts`
+  - Localização: `services/*/src/**/__tests__/*.spec.ts` e `packages/shared/src/**/__tests__/*.spec.ts`
   - **15 arquivos de teste**, **99 testes passando**
   - Cobertura: > 90% para services, > 85% para controllers
 - **E2E**: Testam fluxos completos da API com banco de dados real

@@ -47,7 +47,9 @@ lerna-debug.log*
 *.swo
 *~
 
-
 # Build artifacts
 services/*/dist/
 services/*/node_modules/
+
+# Código legado e arquivos descontinuados
+legacy-deprecated/

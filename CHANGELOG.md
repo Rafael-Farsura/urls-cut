@@ -76,7 +76,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 - Limpeza de arquivos Docker legados
   - Removidos arquivos Docker da aplicação monolítica (`docker-compose.yml`, `docker-compose.dev.yml`, `Dockerfile`, `Dockerfile.dev`)
-  - Mantido apenas `docker-compose.monorepo.yml` (obrigatório pelo teste) e Dockerfiles dos serviços (`services/auth-service/Dockerfile`, `services/url-service/Dockerfile`)
+  - Mantido apenas `docker-compose.yml` (obrigatório pelo teste) e Dockerfiles dos serviços (`services/auth-service/Dockerfile`, `services/url-service/Dockerfile`)
   - Atualizado README.md removendo referências aos arquivos Docker legados
 
 - Limpeza de documentação não relacionada ao Teste Backend End.md
@@ -163,7 +163,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
   - Porta 8080 (ponto único de entrada)
   - Cache configurado (300s)
   - Timeout configurado (3000ms)
-- ✅ **Docker Compose para monorepo** (docker-compose.monorepo.yml)
+- ✅ **Docker Compose para monorepo** (docker-compose.yml)
   - PostgreSQL compartilhado
   - Auth Service containerizado
   - URL Service containerizado
