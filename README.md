@@ -611,4 +611,6 @@ Este projeto é um teste técnico.
 
 ## 👤 Autor
 
+Rafael Farsura
+
 Desenvolvido seguindo as especificações do teste técnico.
